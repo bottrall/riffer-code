@@ -1,0 +1,17 @@
+# Generated from lib/riffer_code/tools/bash.rb with RBS::Inline
+
+class RifferCode::Tools::Bash < Riffer::Tool
+  DEFAULT_TIMEOUT_MS: ::Integer
+
+  MAX_OUTPUT_BYTES: ::Integer
+
+  def call: (context: untyped, command: untyped, ?timeout_ms: untyped) -> untyped
+
+  private
+
+  def run: (untyped command, untyped timeout_seconds) -> untyped
+
+  def kill_group: (untyped pid) -> untyped
+
+  def truncate: (untyped output) -> untyped
+end

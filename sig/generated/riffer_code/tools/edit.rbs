@@ -1,0 +1,5 @@
+# Generated from lib/riffer_code/tools/edit.rb with RBS::Inline
+
+class RifferCode::Tools::Edit < Riffer::Tool
+  def call: (context: untyped, path: untyped, old_string: untyped, new_string: untyped, ?replace_all: untyped) -> untyped
+end

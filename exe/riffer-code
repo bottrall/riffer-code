@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup" if File.exist?(File.expand_path("../Gemfile", __dir__))
+
+require_relative "../lib/riffer-code"
+
+exit(RifferCode::CLI.start)

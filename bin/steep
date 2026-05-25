@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# `bin/steep` with no args runs `steep check`; `bin/steep stats` etc. pass through.
+exec bundle exec steep "${@:-check}"

@@ -1,0 +1,13 @@
+# Generated from lib/riffer_code/cli.rb with RBS::Inline
+
+module RifferCode::CLI
+  def start: (?output: untyped, ?input: untyped) -> untyped
+
+  private
+
+  def onboard: (untyped theme, output: untyped, input: untyped) -> untyped
+
+  def read_secret: (untyped input) -> untyped
+
+  def reveal_banner: (untyped theme, untyped animator) -> untyped
+end

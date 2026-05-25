@@ -1,0 +1,24 @@
+# rbs-inline does not emit `extend self` for modules that use it, so their
+# instance methods aren't visible as singleton methods (e.g.
+# `RifferCode::Credentials.anthropic_api_key`). Reopening each module here to
+# `extend` itself restores that, matching the runtime behaviour.
+
+module RifferCode::Credentials
+  extend ::RifferCode::Credentials
+end
+
+module RifferCode::CLI
+  extend ::RifferCode::CLI
+end
+
+module RifferCode::UI::Banner
+  extend ::RifferCode::UI::Banner
+end
+
+module RifferCode::UI::Riffy
+  extend ::RifferCode::UI::Riffy
+end
+
+module RifferCode::UI::Pixels
+  extend ::RifferCode::UI::Pixels
+end

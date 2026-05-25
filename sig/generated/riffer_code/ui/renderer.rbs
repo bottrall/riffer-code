@@ -1,0 +1,17 @@
+# Generated from lib/riffer_code/ui/renderer.rb with RBS::Inline
+
+class RifferCode::UI::Renderer
+  RESULT_PREVIEW_LIMIT: ::Integer
+
+  def initialize: (?io: untyped, ?theme: untyped) -> untyped
+
+  def render: (untyped event) -> untyped
+
+  def render_tool_result: (untyped message) -> untyped
+
+  private
+
+  def format_arguments: (untyped arguments) -> untyped
+
+  def preview: (untyped content) -> untyped
+end

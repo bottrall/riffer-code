@@ -1,0 +1,24 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+gemspec
+
+# Use the local checkout of riffer when present (local development); otherwise
+# fall back to the released gem declared in the gemspec (CI, fresh clones).
+riffer_path = File.expand_path('~/riffer')
+gem 'riffer', path: riffer_path if File.directory?(riffer_path)
+
+group :development, :test do
+  gem 'minitest', '~> 5.20'
+  gem 'rake', '~> 13.0'
+
+  gem 'rubocop', '~> 1.86', require: false
+  gem 'rubocop-minitest', '~> 0.39', require: false
+  gem 'rubocop-performance', '~> 1.26', require: false
+  gem 'rubocop-rake', '~> 0.7', require: false
+
+  gem 'rbs', '~> 4.0', require: false
+  gem 'rbs-inline', '~> 0.14', require: false
+  gem 'steep', '~> 2.0', require: false
+end

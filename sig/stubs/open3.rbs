@@ -1,0 +1,6 @@
+# RBS's stdlib `open3` signatures declare popen2/popen3/capture2e but omit
+# popen2e. Add it here, mirroring popen2's signature.
+
+module Open3
+  def self?.popen2e: (*String, ?unsetenv_others: bool, ?pgroup: true | Integer, ?umask: Integer, ?close_others: bool, ?chdir: String) -> [IO, IO, Process::Waiter]
+end

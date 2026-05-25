@@ -1,0 +1,12 @@
+# Zeitwerk ships no RBS, so declare the slice of the loader API used to set up
+# autoloading in lib/riffer-code.rb.
+
+module Zeitwerk
+  class Loader
+    def self.new: () -> instance
+    def push_dir: (String dir, ?namespace: Module) -> void
+    def ignore: (*String) -> void
+    def inflector: () -> untyped
+    def setup: () -> void
+  end
+end
