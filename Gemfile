@@ -4,10 +4,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-# Use the local checkout of riffer when present (local development); otherwise
-# fall back to the released gem declared in the gemspec (CI, fresh clones).
-riffer_path = File.expand_path('~/riffer')
-gem 'riffer', path: riffer_path if File.directory?(riffer_path)
+gem 'riffer', git: 'https://github.com/bottrall/riffer.git', branch: 'main'
 
 group :development, :test do
   gem 'minitest', '~> 5.20'
