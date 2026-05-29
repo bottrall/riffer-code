@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'riffer', git: 'https://github.com/bottrall/riffer.git', branch: 'main'
+gem 'riffer', git: 'https://github.com/janeapp/riffer.git', branch: 'main'
 
 group :development, :test do
   gem 'minitest', '~> 5.20'
