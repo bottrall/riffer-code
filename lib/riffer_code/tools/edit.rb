@@ -9,9 +9,9 @@ class RifferCode::Tools::Edit < Riffer::Tool
     required :path, String, description: 'Path to the file (absolute, or relative to the working directory)'
     required :old_string, String, description: 'The exact text to replace'
     required :new_string, String, description: 'The text to replace it with'
-    # riffer's `optional` types its 2nd arg as Class, but Riffer::Boolean is a
-    # module sentinel. Drop the steep:ignore once riffer widens the signature.
-    optional :replace_all, Riffer::Boolean, description: 'Replace all occurrences instead of requiring a unique match', default: false # steep:ignore ArgumentTypeMismatch
+    # riffer's `optional` types its 2nd arg as Class, but Riffer::Params::Boolean
+    # is a module sentinel. Drop the steep:ignore once riffer widens the signature.
+    optional :replace_all, Riffer::Params::Boolean, description: 'Replace all occurrences instead of requiring a unique match', default: false # steep:ignore ArgumentTypeMismatch
   end
 
   def call(context:, path:, old_string:, new_string:, replace_all: false)
