@@ -1,6 +1,6 @@
 # riffer-code
 
-A dead-simple terminal coding agent built on [riffer](https://github.com/bottrall/riffer).
+A dead-simple terminal coding agent built on [riffer](https://github.com/janeapp/riffer).
 
 `riffer-code` is an interactive terminal coding agent with read, write, edit, and bash tools — point it at your project and chat with it from the command line.
 

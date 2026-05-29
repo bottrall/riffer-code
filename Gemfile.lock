@@ -1,5 +1,5 @@
 GIT
-  remote: https://github.com/bottrall/riffer.git
+  remote: https://github.com/janeapp/riffer.git
   revision: 6e8769831750895c9c1d0fd55e469fb882d9c09b
   branch: main
   specs:
