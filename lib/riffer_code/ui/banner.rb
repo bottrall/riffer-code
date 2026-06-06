@@ -25,13 +25,13 @@ module RifferCode::UI::Banner
   INDENT = '  '
   BEAR_GAP = '  '
 
-  def call(theme, model:, cwd:, context:, version:, glint_col: nil)
-    lines(theme, model: model, cwd: cwd, context: context, version: version, glint_col: glint_col).join("\n")
+  def call(theme, model:, cwd:, context:, skills:, version:, glint_col: nil)
+    lines(theme, model: model, cwd: cwd, context: context, skills: skills, version: version, glint_col: glint_col).join("\n")
   end
 
-  def lines(theme, model:, cwd:, context:, version:, glint_col: nil)
+  def lines(theme, model:, cwd:, context:, skills:, version:, glint_col: nil)
     [''] + art(theme, glint_col: glint_col) + [''] +
-      info(theme, model: model, cwd: cwd, context: context, version: version) + ['']
+      info(theme, model: model, cwd: cwd, context: context, skills: skills, version: version) + ['']
   end
 
   def art(theme, glint_col: nil)
@@ -46,8 +46,8 @@ module RifferCode::UI::Banner
     end
   end
 
-  def info(theme, model:, cwd:, context:, version:)
-    rows = { model: model, cwd: cwd, context: context, version: version }.map do |label, value|
+  def info(theme, model:, cwd:, context:, skills:, version:)
+    rows = { model: model, cwd: cwd, context: context, skills: skills, version: version }.map do |label, value|
       "  #{theme.magenta('▸')} #{theme.grey(label.to_s.ljust(INFO_LABEL_WIDTH))}#{value}"
     end
     rows + ['', "  #{theme.dim('type /exit to quit')}"]

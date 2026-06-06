@@ -16,6 +16,8 @@ class RifferCode::UI::Renderer
       @io.print(event.content)
     when Riffer::StreamEvents::ToolCallDone
       @io.puts("\n#{@theme.cyan("⚙ #{event.name}(#{format_arguments(event.arguments)})")}")
+    when Riffer::StreamEvents::SkillActivation
+      @io.puts("\n#{@theme.magenta("✦ skill: #{event.name}")}")
     when Riffer::StreamEvents::Interrupt
       @io.puts(@theme.dim("[interrupted: #{event.reason}]"))
     end

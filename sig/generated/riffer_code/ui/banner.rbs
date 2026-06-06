@@ -11,11 +11,11 @@ module RifferCode::UI::Banner
 
   BEAR_GAP: ::String
 
-  def call: (untyped theme, model: untyped, cwd: untyped, context: untyped, version: untyped, ?glint_col: untyped) -> untyped
+  def call: (untyped theme, model: untyped, cwd: untyped, context: untyped, skills: untyped, version: untyped, ?glint_col: untyped) -> untyped
 
-  def lines: (untyped theme, model: untyped, cwd: untyped, context: untyped, version: untyped, ?glint_col: untyped) -> untyped
+  def lines: (untyped theme, model: untyped, cwd: untyped, context: untyped, skills: untyped, version: untyped, ?glint_col: untyped) -> untyped
 
   def art: (untyped theme, ?glint_col: untyped) -> untyped
 
-  def info: (untyped theme, model: untyped, cwd: untyped, context: untyped, version: untyped) -> untyped
+  def info: (untyped theme, model: untyped, cwd: untyped, context: untyped, skills: untyped, version: untyped) -> untyped
 end
