@@ -27,9 +27,13 @@ class RifferCode::REPL
       skill_names = prompt.scan(SKILL_TOKEN).flatten
       remaining = prompt.gsub(SKILL_TOKEN, '').strip
 
-      skill_names.each { |name| activate_skill(name) }
+      skills_activated = skill_names.count { |name| activate_skill(name) }
 
-      run_turn(remaining) unless remaining.empty?
+      if remaining.empty?
+        run_turn('') if skills_activated > 0
+      else
+        run_turn(remaining)
+      end
     end
 
     @output.puts("\n#{@theme.grey('see you on the next riff.')}")
@@ -60,6 +64,7 @@ class RifferCode::REPL
 
     skills.activate(name)
     @output.puts(@theme.magenta("✦ skill: #{name}"))
+    true
   rescue Riffer::ArgumentError
     nil
   rescue StandardError => e

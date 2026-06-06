@@ -35,6 +35,35 @@ class RifferCode::REPLTest < Minitest::Test
     end
   end
 
+  def test_skill_only_prompt_triggers_agent_turn
+    with_model('mock/claude-test') do
+      with_skill('refactor') do |agent, output|
+        repl = build_repl(agent, output, "/refactor\n")
+
+        repl.run
+
+        # The mock provider returns "Mock response" — confirms agent.stream was called
+        assert_includes output.string, 'Mock response'
+      end
+    end
+  end
+
+  def test_unrecognised_skill_only_prompt_does_not_trigger_agent_turn
+    with_model('mock/claude-test') do
+      Dir.mktmpdir do |dir|
+        Dir.chdir(dir) do
+          output = StringIO.new
+          agent = RifferCode::CodingAgent.new
+          repl = build_repl(agent, output, "/no-such-skill\n")
+
+          repl.run
+
+          refute_includes output.string, 'Mock response'
+        end
+      end
+    end
+  end
+
   def test_skill_token_at_start_of_prompt_activates_skill
     with_skill('refactor') do |agent, output|
       repl = build_repl(agent, output, "/refactor please clean up this file\n")
@@ -147,6 +176,14 @@ class RifferCode::REPLTest < Minitest::Test
 
   private
 
+  def with_model(model)
+    previous = ENV.fetch('RIFFER_CODE_MODEL', nil)
+    ENV['RIFFER_CODE_MODEL'] = model
+    yield
+  ensure
+    ENV['RIFFER_CODE_MODEL'] = previous
+  end
+
   def build_repl(agent, output, input_str)
     theme = RifferCode::UI::Theme.new(enabled: false)
     renderer = RifferCode::UI::Renderer.new(io: output, theme: theme)
@@ -154,21 +191,36 @@ class RifferCode::REPLTest < Minitest::Test
   end
 
   def with_skill(name, agent: nil, &block)
-    Dir.mktmpdir do |dir|
-      Dir.chdir(dir) do
-        skill_dir = File.join(dir, '.skills', name)
-        FileUtils.mkdir_p(skill_dir)
-        File.write(File.join(skill_dir, 'SKILL.md'), <<~MD)
-          ---
-          name: #{name}
-          description: A test skill named #{name}.
-          ---
-          You are the #{name} assistant.
-        MD
+    if agent
+      skill_dir = File.join(Dir.pwd, '.skills', name)
+      FileUtils.mkdir_p(skill_dir)
+      File.write(File.join(skill_dir, 'SKILL.md'), <<~MD)
+        ---
+        name: #{name}
+        description: A test skill named #{name}.
+        ---
+        You are the #{name} assistant.
+      MD
 
-        output = StringIO.new
-        agent ||= RifferCode::CodingAgent.new
-        yield(agent, output)
+      output = StringIO.new
+      yield(agent, output)
+    else
+      Dir.mktmpdir do |dir|
+        Dir.chdir(dir) do
+          skill_dir = File.join(dir, '.skills', name)
+          FileUtils.mkdir_p(skill_dir)
+          File.write(File.join(skill_dir, 'SKILL.md'), <<~MD)
+            ---
+            name: #{name}
+            description: A test skill named #{name}.
+            ---
+            You are the #{name} assistant.
+          MD
+
+          output = StringIO.new
+          agent = RifferCode::CodingAgent.new
+          yield(agent, output)
+        end
       end
     end
   end

@@ -3,7 +3,7 @@
 class RifferCode::REPL
   EXIT_COMMANDS: untyped
 
-  SKILL_TOKEN: untyped
+  SKILL_TOKEN: ::Regexp
 
   def initialize: (agent: untyped, renderer: untyped, ?input: untyped, ?output: untyped, ?theme: untyped, ?animator: untyped) -> untyped
 
