@@ -1,18 +1,10 @@
-GIT
-  remote: https://github.com/janeapp/riffer.git
-  revision: 3637a53ae8160e70bdaeae3d49812adfefac2c4b
-  branch: main
-  specs:
-    riffer (0.28.0)
-      zeitwerk (~> 2.6, >= 2.6.0)
-
 PATH
   remote: .
   specs:
     riffer-code (0.1.0)
       anthropic (~> 1.42)
       base64 (~> 0.2)
-      riffer (~> 0.28)
+      riffer (~> 0.31)
       zeitwerk (~> 2.6)
 
 GEM
@@ -59,6 +51,8 @@ GEM
       prism (>= 0.29)
       rbs (~> 4.0)
     regexp_parser (2.12.0)
+    riffer (0.31.0)
+      zeitwerk (~> 2.6, >= 2.6.0)
     rubocop (1.86.2)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
@@ -115,14 +109,14 @@ GEM
 
 PLATFORMS
   arm64-darwin-25
-  ruby
+  x86_64-linux
 
 DEPENDENCIES
   minitest (~> 5.20)
   rake (~> 13.0)
   rbs (~> 4.0)
   rbs-inline (~> 0.14)
-  riffer!
+  riffer (~> 0.31)
   riffer-code!
   rubocop (~> 1.86)
   rubocop-minitest (~> 0.39)
@@ -159,7 +153,7 @@ CHECKSUMS
   rbs (4.0.2) sha256=af75671e66cd03434cc546622741ebf83f6197ec4328375805306330bf78ef25
   rbs-inline (0.14.0) sha256=eaf47b46690d63acddab1f6804c9cc205a4bc78e637cfc421a0b1239874ef51c
   regexp_parser (2.12.0) sha256=35a916a1d63190ab5c9009457136ae5f3c0c7512d60291d0d1378ba18ce08ebb
-  riffer (0.28.0)
+  riffer (0.31.0) sha256=39ba90222e45c6da158e4f29df0f2444a7d9138efc5dd9e3dbb3a335bdb7e41b
   riffer-code (0.1.0)
   rubocop (1.86.2) sha256=bb2e97f635eda42c448f2588f4a6ff78f221b8bdfdf65b1e9b07fbd57521b45d
   rubocop-ast (1.49.1) sha256=4412f3ee70f6fe4546cc489548e0f6fcf76cafcfa80fa03af67098ffed755035
