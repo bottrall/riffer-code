@@ -12,24 +12,26 @@ end
 
 RuboCop::RakeTask.new
 
-desc 'Generate RBS signatures from inline annotations'
-task :'sig:generate' do
-  sh 'rbs-inline --opt-out --output=sig/generated lib'
-end
+namespace :rbs do
+  desc 'Generate RBS signatures from inline annotations'
+  task :generate do
+    sh 'rbs-inline --opt-out --output=sig/generated lib'
+  end
 
-desc 'Fail if the committed RBS is out of date with the source'
-task :'sig:check' do
-  Dir.mktmpdir do |dir|
-    sh "rbs-inline --opt-out --output=#{dir} lib > /dev/null"
-    sh "diff -r sig/generated #{dir}" do |ok, _res|
-      abort 'sig/generated is out of date — run `bin/rake sig:generate`' unless ok
-    end
+  desc 'Watch lib/ for changes and regenerate RBS files'
+  task :watch do
+    require 'guard'
+    require 'guard/commander'
+
+    Guard.start(no_interactions: true)
   end
 end
 
-desc 'Type-check with Steep'
-task :steep do
-  sh 'steep check'
+namespace :steep do
+  desc 'Type-check with Steep'
+  task :check do
+    sh 'steep check'
+  end
 end
 
-task default: %i[test rubocop sig:check steep]
+task default: %i[test rubocop steep:check]

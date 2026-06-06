@@ -1,10 +1,7 @@
 name: ci
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
+  - pull_request
 
 jobs:
   lint:
@@ -15,7 +12,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - run: bundle exec rake rubocop
+      - run: bin/lint
 
   test:
     runs-on: ubuntu-latest
@@ -33,9 +30,9 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - run: bundle exec rake test
+      - run: bin/test
 
-  types:
+  typecheck:
     runs-on: ubuntu-latest
 
     steps:
@@ -43,7 +40,9 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+      - name: Generate RBS files
+        run: bin/rbs
       - name: Check for RBS drift
-        run: bundle exec rake sig:check
+        run: git diff --exit-code sig/generated/
       - name: Run Steep type check
-        run: bundle exec steep check
+        run: bin/typecheck
