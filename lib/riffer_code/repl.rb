@@ -30,7 +30,7 @@ class RifferCode::REPL
       skills_activated = skill_names.count { |name| activate_skill(name) }
 
       if remaining.empty?
-        run_turn('') if skills_activated > 0
+        run_turn('') if skills_activated.positive?
       else
         run_turn(remaining)
       end

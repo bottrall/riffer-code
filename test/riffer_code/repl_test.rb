@@ -95,50 +95,42 @@ class RifferCode::REPLTest < Minitest::Test
   end
 
   def test_multiple_skill_tokens_activate_first_skill
-    with_skill('refactor') do |agent, _|
-      with_skill('code-review', agent: agent) do |_, output|
-        repl = build_repl(agent, output, "/refactor /code-review\n")
+    with_skills('refactor', 'code-review') do |agent, output|
+      repl = build_repl(agent, output, "/refactor /code-review\n")
 
-        repl.run
+      repl.run
 
-        assert agent.context.skills.activated?('refactor')
-      end
+      assert agent.context.skills.activated?('refactor')
     end
   end
 
   def test_multiple_skill_tokens_activate_second_skill
-    with_skill('refactor') do |agent, _|
-      with_skill('code-review', agent: agent) do |_, output|
-        repl = build_repl(agent, output, "/refactor /code-review\n")
+    with_skills('refactor', 'code-review') do |agent, output|
+      repl = build_repl(agent, output, "/refactor /code-review\n")
 
-        repl.run
+      repl.run
 
-        assert agent.context.skills.activated?('code-review')
-      end
+      assert agent.context.skills.activated?('code-review')
     end
   end
 
   def test_multiple_skill_tokens_print_confirmation_for_first
-    with_skill('refactor') do |agent, _|
-      with_skill('code-review', agent: agent) do |_, output|
-        repl = build_repl(agent, output, "/refactor /code-review\n")
+    with_skills('refactor', 'code-review') do |agent, output|
+      repl = build_repl(agent, output, "/refactor /code-review\n")
 
-        repl.run
+      repl.run
 
-        assert_includes output.string, 'skill: refactor'
-      end
+      assert_includes output.string, 'skill: refactor'
     end
   end
 
   def test_multiple_skill_tokens_print_confirmation_for_second
-    with_skill('refactor') do |agent, _|
-      with_skill('code-review', agent: agent) do |_, output|
-        repl = build_repl(agent, output, "/refactor /code-review\n")
+    with_skills('refactor', 'code-review') do |agent, output|
+      repl = build_repl(agent, output, "/refactor /code-review\n")
 
-        repl.run
+      repl.run
 
-        assert_includes output.string, 'skill: code-review'
-      end
+      assert_includes output.string, 'skill: code-review'
     end
   end
 
@@ -190,23 +182,14 @@ class RifferCode::REPLTest < Minitest::Test
     RifferCode::REPL.new(agent: agent, renderer: renderer, input: StringIO.new(input_str), output: output, theme: theme)
   end
 
-  def with_skill(name, agent: nil, &block)
-    if agent
-      skill_dir = File.join(Dir.pwd, '.skills', name)
-      FileUtils.mkdir_p(skill_dir)
-      File.write(File.join(skill_dir, 'SKILL.md'), <<~MD)
-        ---
-        name: #{name}
-        description: A test skill named #{name}.
-        ---
-        You are the #{name} assistant.
-      MD
+  def with_skill(name, &)
+    with_skills(name, &)
+  end
 
-      output = StringIO.new
-      yield(agent, output)
-    else
-      Dir.mktmpdir do |dir|
-        Dir.chdir(dir) do
+  def with_skills(*names)
+    Dir.mktmpdir do |dir|
+      Dir.chdir(dir) do
+        names.each do |name|
           skill_dir = File.join(dir, '.skills', name)
           FileUtils.mkdir_p(skill_dir)
           File.write(File.join(skill_dir, 'SKILL.md'), <<~MD)
@@ -216,11 +199,11 @@ class RifferCode::REPLTest < Minitest::Test
             ---
             You are the #{name} assistant.
           MD
-
-          output = StringIO.new
-          agent = RifferCode::CodingAgent.new
-          yield(agent, output)
         end
+
+        output = StringIO.new
+        agent = RifferCode::CodingAgent.new
+        yield(agent, output)
       end
     end
   end
