@@ -15,7 +15,7 @@ class RifferCode::CodingAgent < Riffer::Agent
     RifferCode::Tools::Bash
   ]
 
-  max_steps Float::INFINITY
+  max_steps nil
 
   instructions(lambda do
     context_files = [GLOBAL_AGENTS_FILE, File.join(Dir.pwd, 'AGENTS.md')]
