@@ -5,6 +5,8 @@ require 'date'
 class RifferCode::CodingAgent < Riffer::Agent
   DEFAULT_MODEL = 'anthropic/claude-sonnet-4-6'
   GLOBAL_AGENTS_FILE = File.expand_path('~/.riffer-code/AGENTS.md')
+  GLOBAL_SKILLS_DIR = File.expand_path('~/.riffer-code/skills')
+  PROJECT_SKILLS_DIR = -> { File.join(Dir.pwd, '.skills') }
 
   model(-> { ENV.fetch('RIFFER_CODE_MODEL', DEFAULT_MODEL) })
 
@@ -14,6 +16,10 @@ class RifferCode::CodingAgent < Riffer::Agent
     RifferCode::Tools::Edit,
     RifferCode::Tools::Bash
   ]
+
+  skills do
+    backend(->(_ctx) { Riffer::Skills::FilesystemBackend.new(GLOBAL_SKILLS_DIR, PROJECT_SKILLS_DIR.call) })
+  end
 
   max_steps nil
 

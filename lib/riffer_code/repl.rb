@@ -2,6 +2,7 @@
 
 class RifferCode::REPL
   EXIT_COMMANDS = ['/exit', '/quit'].freeze
+  SKILL_TOKEN = %r{/(?!(?:exit|quit)\b)([a-z0-9]+(?:-[a-z0-9]+)*)}
 
   def initialize(agent:, renderer:, input: $stdin, output: $stdout, theme: RifferCode::UI::Theme.for(output), animator: RifferCode::UI::Animator.new(io: output, theme:))
     @agent = agent
@@ -23,7 +24,16 @@ class RifferCode::REPL
       next if prompt.empty?
       break if EXIT_COMMANDS.include?(prompt)
 
-      run_turn(prompt)
+      skill_names = prompt.scan(SKILL_TOKEN).flatten
+      remaining = prompt.gsub(SKILL_TOKEN, '').strip
+
+      skills_activated = skill_names.count { |name| activate_skill(name) }
+
+      if remaining.empty?
+        run_turn('') if skills_activated.positive?
+      else
+        run_turn(remaining)
+      end
     end
 
     @output.puts("\n#{@theme.grey('see you on the next riff.')}")
@@ -42,5 +52,22 @@ class RifferCode::REPL
     @output.puts("\nError: #{e.message}")
   ensure
     @animator.stop_thinking
+  end
+
+  def activate_skill(name)
+    skills = @agent.context.skills
+
+    unless skills
+      @output.puts(@theme.grey('No skills configured.'))
+      return
+    end
+
+    skills.activate(name)
+    @output.puts(@theme.magenta("✦ skill: #{name}"))
+    true
+  rescue Riffer::ArgumentError
+    nil
+  rescue StandardError => e
+    @output.puts(@theme.red("Error activating skill: #{e.message}"))
   end
 end

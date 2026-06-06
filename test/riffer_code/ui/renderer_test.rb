@@ -21,4 +21,16 @@ class RifferCode::UI::RendererTest < Minitest::Test
 
     refute_includes @io.string, "\e["
   end
+
+  def test_renders_skill_activation_with_skill_name
+    @renderer.render(Riffer::StreamEvents::SkillActivation.new('refactor'))
+
+    assert_includes @io.string, 'skill: refactor'
+  end
+
+  def test_renders_skill_activation_on_its_own_line
+    @renderer.render(Riffer::StreamEvents::SkillActivation.new('code-review'))
+
+    assert_includes @io.string, "\n"
+  end
 end

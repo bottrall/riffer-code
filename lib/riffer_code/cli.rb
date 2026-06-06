@@ -56,8 +56,20 @@ module RifferCode::CLI
 
     glints = RifferCode::UI::Riffy::GLINT_COLS + [nil]
     frames = glints.map do |glint_col|
-      RifferCode::UI::Banner.lines(theme, model: model, cwd: Dir.pwd, context: context, version: RifferCode::VERSION, glint_col: glint_col)
+      RifferCode::UI::Banner.lines(theme, model: model, cwd: Dir.pwd, context: context, skills: count_skills, version: RifferCode::VERSION, glint_col: glint_col)
     end
     animator.reveal(frames)
+  end
+
+  def count_skills
+    dirs = [
+      RifferCode::CodingAgent::GLOBAL_SKILLS_DIR,
+      RifferCode::CodingAgent::PROJECT_SKILLS_DIR.call
+    ]
+    backend = Riffer::Skills::FilesystemBackend.new(*dirs)
+    count = backend.list_skills.length
+    count.zero? ? 'none' : count.to_s
+  rescue StandardError
+    'none'
   end
 end

@@ -43,6 +43,69 @@ class RifferCode::CodingAgentTest < Minitest::Test
     end
   end
 
+  def test_includes_skill_activate_tool_when_no_skills_are_present
+    Dir.mktmpdir do |dir|
+      Dir.chdir(dir) do
+        # No .skills dir exists — the agent still registers the tool, the backend just returns empty
+        agent = RifferCode::CodingAgent.new
+
+        assert_includes agent.tools.map(&:name), 'skill_activate'
+      end
+    end
+  end
+
+  def test_loads_skills_from_project_skills_dir
+    Dir.mktmpdir do |dir|
+      Dir.chdir(dir) do
+        skill_dir = File.join(dir, '.skills', 'refactor')
+        FileUtils.mkdir_p(skill_dir)
+        File.write(File.join(skill_dir, 'SKILL.md'), <<~MD)
+          ---
+          name: refactor
+          description: Refactors code for clarity and maintainability.
+          ---
+          You are a refactoring assistant.
+        MD
+
+        with_model('mock/claude-test') do
+          agent = RifferCode::CodingAgent.new
+          agent.generate('hello')
+
+          skills_msg = agent.session.messages.grep(Riffer::Messages::System)
+                            .find { |m| m.content.include?('refactor') }
+
+          refute_nil skills_msg
+        end
+      end
+    end
+  end
+
+  def test_uses_xml_adapter_for_claude_models
+    Dir.mktmpdir do |dir|
+      Dir.chdir(dir) do
+        skill_dir = File.join(dir, '.skills', 'refactor')
+        FileUtils.mkdir_p(skill_dir)
+        File.write(File.join(skill_dir, 'SKILL.md'), <<~MD)
+          ---
+          name: refactor
+          description: Refactors code for clarity and maintainability.
+          ---
+          You are a refactoring assistant.
+        MD
+
+        with_model('mock/claude-sonnet-4-6') do
+          agent = RifferCode::CodingAgent.new
+          agent.generate('hello')
+
+          skills_msg = agent.session.messages.grep(Riffer::Messages::System)
+                            .find { |m| m.content.include?('<available_skills>') }
+
+          refute_nil skills_msg
+        end
+      end
+    end
+  end
+
   private
 
   def with_model(model)
