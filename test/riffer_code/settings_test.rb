@@ -43,7 +43,7 @@ class RifferCode::SettingsTest < Minitest::Test
     end
   end
 
-  def test_returns_pricing_for_configured_model
+  def test_returns_input_pricing_for_configured_model
     Dir.mktmpdir do |dir|
       path = settings_file(dir, {
                              'models' => {
@@ -56,8 +56,53 @@ class RifferCode::SettingsTest < Minitest::Test
       pricing = RifferCode::Settings.pricing_for('anthropic/claude-sonnet-4-6', path: path)
 
       assert_in_delta(3.0, pricing[:input])
+    end
+  end
+
+  def test_returns_output_pricing_for_configured_model
+    Dir.mktmpdir do |dir|
+      path = settings_file(dir, {
+                             'models' => {
+                               'anthropic/claude-sonnet-4-6' => {
+                                 'input' => 3.0, 'output' => 15.0, 'cache_write' => 3.75, 'cache_read' => 0.3
+                               }
+                             }
+                           })
+
+      pricing = RifferCode::Settings.pricing_for('anthropic/claude-sonnet-4-6', path: path)
+
       assert_in_delta(15.0, pricing[:output])
+    end
+  end
+
+  def test_returns_cache_write_pricing_for_configured_model
+    Dir.mktmpdir do |dir|
+      path = settings_file(dir, {
+                             'models' => {
+                               'anthropic/claude-sonnet-4-6' => {
+                                 'input' => 3.0, 'output' => 15.0, 'cache_write' => 3.75, 'cache_read' => 0.3
+                               }
+                             }
+                           })
+
+      pricing = RifferCode::Settings.pricing_for('anthropic/claude-sonnet-4-6', path: path)
+
       assert_in_delta(3.75, pricing[:cache_write])
+    end
+  end
+
+  def test_returns_cache_read_pricing_for_configured_model
+    Dir.mktmpdir do |dir|
+      path = settings_file(dir, {
+                             'models' => {
+                               'anthropic/claude-sonnet-4-6' => {
+                                 'input' => 3.0, 'output' => 15.0, 'cache_write' => 3.75, 'cache_read' => 0.3
+                               }
+                             }
+                           })
+
+      pricing = RifferCode::Settings.pricing_for('anthropic/claude-sonnet-4-6', path: path)
+
       assert_in_delta(0.3, pricing[:cache_read])
     end
   end
@@ -80,7 +125,7 @@ class RifferCode::SettingsTest < Minitest::Test
     end
   end
 
-  def test_coerces_pricing_values_to_float
+  def test_coerces_input_pricing_to_float
     Dir.mktmpdir do |dir|
       path = settings_file(dir, {
                              'models' => {
@@ -93,6 +138,21 @@ class RifferCode::SettingsTest < Minitest::Test
       pricing = RifferCode::Settings.pricing_for('anthropic/claude-sonnet-4-6', path: path)
 
       assert_kind_of Float, pricing[:input]
+    end
+  end
+
+  def test_coerces_cache_read_pricing_to_float
+    Dir.mktmpdir do |dir|
+      path = settings_file(dir, {
+                             'models' => {
+                               'anthropic/claude-sonnet-4-6' => {
+                                 'input' => 3, 'output' => 15, 'cache_write' => 4, 'cache_read' => 0
+                               }
+                             }
+                           })
+
+      pricing = RifferCode::Settings.pricing_for('anthropic/claude-sonnet-4-6', path: path)
+
       assert_kind_of Float, pricing[:cache_read]
     end
   end

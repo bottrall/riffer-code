@@ -14,28 +14,47 @@ class RifferCode::TokenTallyTest < Minitest::Test
     )
   end
 
-  def test_starts_empty
+  def test_starts_with_zero_tokens
     tally = RifferCode::TokenTally.new
 
     assert_equal 0, tally.total_tokens
+  end
+
+  def test_any_returns_false_when_empty
+    tally = RifferCode::TokenTally.new
+
     refute_predicate tally, :any?
   end
 
-  def test_accumulates_input_and_output_tokens
+  def test_accumulates_input_tokens
     tally = RifferCode::TokenTally.new(pricing: SONNET_PRICING)
     tally.add(usage(input: 100, output: 50))
     tally.add(usage(input: 200, output: 75))
 
     assert_equal 300, tally.input_tokens
+  end
+
+  def test_accumulates_output_tokens
+    tally = RifferCode::TokenTally.new(pricing: SONNET_PRICING)
+    tally.add(usage(input: 100, output: 50))
+    tally.add(usage(input: 200, output: 75))
+
     assert_equal 125, tally.output_tokens
   end
 
-  def test_accumulates_cache_tokens
+  def test_accumulates_cache_write_tokens
     tally = RifferCode::TokenTally.new(pricing: SONNET_PRICING)
     tally.add(usage(input: 0, output: 0, cache_write: 500, cache_read: 200))
     tally.add(usage(input: 0, output: 0, cache_write: 100, cache_read: 800))
 
     assert_equal 600, tally.cache_write_tokens
+  end
+
+  def test_accumulates_cache_read_tokens
+    tally = RifferCode::TokenTally.new(pricing: SONNET_PRICING)
+    tally.add(usage(input: 0, output: 0, cache_write: 500, cache_read: 200))
+    tally.add(usage(input: 0, output: 0, cache_write: 100, cache_read: 800))
+
     assert_equal 1000, tally.cache_read_tokens
   end
 
