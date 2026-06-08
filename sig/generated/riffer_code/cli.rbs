@@ -9,7 +9,7 @@ module RifferCode::CLI
 
   def read_secret: (untyped input) -> untyped
 
-  def reveal_banner: (untyped theme, untyped animator) -> untyped
+  def reveal_banner: (untyped theme, untyped animator, untyped model) -> untyped
 
   def count_skills: () -> untyped
 end

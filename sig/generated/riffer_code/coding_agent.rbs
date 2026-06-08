@@ -1,8 +1,6 @@
 # Generated from lib/riffer_code/coding_agent.rb with RBS::Inline
 
 class RifferCode::CodingAgent < Riffer::Agent
-  DEFAULT_MODEL: ::String
-
   GLOBAL_AGENTS_FILE: untyped
 
   GLOBAL_SKILLS_DIR: untyped

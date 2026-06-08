@@ -1,0 +1,38 @@
+# Generated from lib/riffer_code/settings.rb with RBS::Inline
+
+# Reads and writes the riffer-code user settings file at
+# <tt>~/.riffer-code/settings.json</tt>.
+#
+# Example file:
+#
+#   {
+#     "model": "anthropic/claude-sonnet-4-6",
+#     "models": {
+#       "anthropic/claude-sonnet-4-6": {
+#         "input": 3.0,
+#         "output": 15.0,
+#         "cache_write": 3.75,
+#         "cache_read": 0.3
+#       }
+#     }
+#   }
+#
+# All keys are optional. Missing pricing means cost display is suppressed.
+module RifferCode::Settings
+  PATH: untyped
+
+  DEFAULT_MODEL: ::String
+
+  # Returns the configured model string, or +DEFAULT_MODEL+ if not set.
+  def model: (?path: untyped) -> untyped
+
+  # Returns the pricing hash for +model+, or +nil+ if not configured.
+  #
+  # The returned hash has symbol keys +:input+, +:output+, +:cache_write+,
+  # +:cache_read+ (all Float, USD per million tokens).
+  def pricing_for: (untyped model, ?path: untyped) -> untyped
+
+  private
+
+  def read: (untyped path) -> untyped
+end
