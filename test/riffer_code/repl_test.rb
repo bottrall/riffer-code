@@ -36,30 +36,27 @@ class RifferCode::REPLTest < Minitest::Test
   end
 
   def test_skill_only_prompt_triggers_agent_turn
-    with_model('mock/claude-test') do
-      with_skill('refactor') do |agent, output|
-        repl = build_repl(agent, output, "/refactor\n")
+    with_skill('refactor') do |_agent, output|
+      agent = mock_agent
+      repl = build_repl(agent, output, "/refactor\n")
 
-        repl.run
+      repl.run
 
-        # The mock provider returns "Mock response" — confirms agent.stream was called
-        assert_includes output.string, 'Mock response'
-      end
+      # The mock provider returns "Mock response" — confirms agent.stream was called
+      assert_includes output.string, 'Mock response'
     end
   end
 
   def test_unrecognised_skill_only_prompt_does_not_trigger_agent_turn
-    with_model('mock/claude-test') do
-      Dir.mktmpdir do |dir|
-        Dir.chdir(dir) do
-          output = StringIO.new
-          agent = RifferCode::CodingAgent.new
-          repl = build_repl(agent, output, "/no-such-skill\n")
+    Dir.mktmpdir do |dir|
+      Dir.chdir(dir) do
+        output = StringIO.new
+        agent = mock_agent
+        repl = build_repl(agent, output, "/no-such-skill\n")
 
-          repl.run
+        repl.run
 
-          refute_includes output.string, 'Mock response'
-        end
+        refute_includes output.string, 'Mock response'
       end
     end
   end
@@ -168,12 +165,10 @@ class RifferCode::REPLTest < Minitest::Test
 
   private
 
-  def with_model(model)
-    previous = ENV.fetch('RIFFER_CODE_MODEL', nil)
-    ENV['RIFFER_CODE_MODEL'] = model
-    yield
-  ensure
-    ENV['RIFFER_CODE_MODEL'] = previous
+  def mock_agent
+    config = RifferCode::CodingAgent.config.dup
+    config.model = 'mock/claude-test'
+    RifferCode::CodingAgent.new(config: config)
   end
 
   def build_repl(agent, output, input_str)

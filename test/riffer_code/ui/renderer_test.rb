@@ -33,4 +33,95 @@ class RifferCode::UI::RendererTest < Minitest::Test
 
     assert_includes @io.string, "\n"
   end
+
+  def test_ignores_token_usage_done_when_no_tally_provided
+    usage = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50)
+    event = Riffer::StreamEvents::TokenUsageDone.new(token_usage: usage)
+
+    @renderer.render(event)
+
+    assert_empty @io.string
+  end
+
+  def test_renders_token_usage_when_tally_is_present
+    tally = RifferCode::TokenTally.new
+    renderer = RifferCode::UI::Renderer.new(
+      io: @io,
+      theme: RifferCode::UI::Theme.new(enabled: false),
+      tally: tally
+    )
+    usage = Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50)
+    event = Riffer::StreamEvents::TokenUsageDone.new(token_usage: usage)
+
+    renderer.render(event)
+
+    assert_includes @io.string, '↑100'
+    assert_includes @io.string, '↓50'
+  end
+
+  def test_renders_cache_token_breakdown_when_present
+    tally = RifferCode::TokenTally.new
+    renderer = RifferCode::UI::Renderer.new(
+      io: @io,
+      theme: RifferCode::UI::Theme.new(enabled: false),
+      tally: tally
+    )
+    usage = Riffer::Providers::TokenUsage.new(
+      input_tokens: 100,
+      output_tokens: 50,
+      cache_creation_tokens: 400,
+      cache_read_tokens: 200
+    )
+    event = Riffer::StreamEvents::TokenUsageDone.new(token_usage: usage)
+
+    renderer.render(event)
+
+    assert_includes @io.string, 'cache_write:400'
+    assert_includes @io.string, 'cache_read:200'
+  end
+
+  def test_renders_session_token_total_across_turns
+    tally = RifferCode::TokenTally.new
+    renderer = RifferCode::UI::Renderer.new(
+      io: @io,
+      theme: RifferCode::UI::Theme.new(enabled: false),
+      tally: tally
+    )
+
+    renderer.render(Riffer::StreamEvents::TokenUsageDone.new(
+      token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 100, output_tokens: 50)
+    ))
+    renderer.render(Riffer::StreamEvents::TokenUsageDone.new(
+      token_usage: Riffer::Providers::TokenUsage.new(input_tokens: 200, output_tokens: 100)
+    ))
+
+    assert_includes @io.string, 'session 450 tok'
+  end
+
+  def test_renders_estimated_cost_for_known_model
+    pricing = {input: 3.0, output: 15.0, cache_write: 3.75, cache_read: 0.3}
+    tally = RifferCode::TokenTally.new(pricing: pricing)
+    renderer = RifferCode::UI::Renderer.new(
+      io: @io,
+      theme: RifferCode::UI::Theme.new(enabled: false),
+      tally: tally
+    )
+    usage = Riffer::Providers::TokenUsage.new(input_tokens: 1000, output_tokens: 500)
+    renderer.render(Riffer::StreamEvents::TokenUsageDone.new(token_usage: usage))
+
+    assert_includes @io.string, '~$'
+  end
+
+  def test_omits_estimated_cost_when_no_pricing_provided
+    tally = RifferCode::TokenTally.new
+    renderer = RifferCode::UI::Renderer.new(
+      io: @io,
+      theme: RifferCode::UI::Theme.new(enabled: false),
+      tally: tally
+    )
+    usage = Riffer::Providers::TokenUsage.new(input_tokens: 1000, output_tokens: 500)
+    renderer.render(Riffer::StreamEvents::TokenUsageDone.new(token_usage: usage))
+
+    refute_includes @io.string, '~$'
+  end
 end

@@ -36,11 +36,9 @@ class RifferCode::CodingAgentTest < Minitest::Test
   end
 
   def test_runs_a_turn_against_the_mock_provider
-    with_model('mock/claude-test') do
-      response = RifferCode::CodingAgent.new.generate('hello')
+    response = mock_agent.generate('hello')
 
-      assert_equal 'Mock response', response.content
-    end
+    assert_equal 'Mock response', response.content
   end
 
   def test_includes_skill_activate_tool_when_no_skills_are_present
@@ -67,15 +65,13 @@ class RifferCode::CodingAgentTest < Minitest::Test
           You are a refactoring assistant.
         MD
 
-        with_model('mock/claude-test') do
-          agent = RifferCode::CodingAgent.new
-          agent.generate('hello')
+        agent = mock_agent
+        agent.generate('hello')
 
-          skills_msg = agent.session.messages.grep(Riffer::Messages::System)
-                            .find { |m| m.content.include?('refactor') }
+        skills_msg = agent.session.messages.grep(Riffer::Messages::System)
+                          .find { |m| m.content.include?('refactor') }
 
-          refute_nil skills_msg
-        end
+        refute_nil skills_msg
       end
     end
   end
@@ -93,26 +89,22 @@ class RifferCode::CodingAgentTest < Minitest::Test
           You are a refactoring assistant.
         MD
 
-        with_model('mock/claude-sonnet-4-6') do
-          agent = RifferCode::CodingAgent.new
-          agent.generate('hello')
+        agent = mock_agent(model: 'mock/claude-sonnet-4-6')
+        agent.generate('hello')
 
-          skills_msg = agent.session.messages.grep(Riffer::Messages::System)
-                            .find { |m| m.content.include?('<available_skills>') }
+        skills_msg = agent.session.messages.grep(Riffer::Messages::System)
+                          .find { |m| m.content.include?('<available_skills>') }
 
-          refute_nil skills_msg
-        end
+        refute_nil skills_msg
       end
     end
   end
 
   private
 
-  def with_model(model)
-    previous = ENV.fetch('RIFFER_CODE_MODEL', nil)
-    ENV['RIFFER_CODE_MODEL'] = model
-    yield
-  ensure
-    ENV['RIFFER_CODE_MODEL'] = previous
+  def mock_agent(model: 'mock/claude-test')
+    config = RifferCode::CodingAgent.config.dup
+    config.model = model
+    RifferCode::CodingAgent.new(config: config)
   end
 end

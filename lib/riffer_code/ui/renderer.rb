@@ -5,9 +5,10 @@ require 'json'
 class RifferCode::UI::Renderer
   RESULT_PREVIEW_LIMIT = 200
 
-  def initialize(io: $stdout, theme: RifferCode::UI::Theme.for(io))
+  def initialize(io: $stdout, theme: RifferCode::UI::Theme.for(io), tally: nil)
     @io = io
     @theme = theme
+    @tally = tally
   end
 
   def render(event)
@@ -20,6 +21,8 @@ class RifferCode::UI::Renderer
       @io.puts("\n#{@theme.magenta("✦ skill: #{event.name}")}")
     when Riffer::StreamEvents::Interrupt
       @io.puts(@theme.dim("[interrupted: #{event.reason}]"))
+    when Riffer::StreamEvents::TokenUsageDone
+      render_token_usage(event.token_usage)
     end
   end
 
@@ -31,6 +34,22 @@ class RifferCode::UI::Renderer
   end
 
   private
+
+  def render_token_usage(usage)
+    return unless @tally
+
+    @tally.add(usage)
+
+    parts = ["↑#{usage.input_tokens}", "↓#{usage.output_tokens}"]
+    parts << "cache_write:#{usage.cache_creation_tokens}" if usage.cache_creation_tokens&.positive?
+    parts << "cache_read:#{usage.cache_read_tokens}" if usage.cache_read_tokens&.positive?
+
+    session_parts = ["session #{@tally.total_tokens} tok"]
+    cost = @tally.estimated_cost
+    session_parts << format('~$%.4f', cost) if cost
+
+    @io.puts("\n#{@theme.dim("#{parts.join(' · ')}   #{session_parts.join(' · ')}")}")
+  end
 
   def format_arguments(arguments)
     parsed = JSON.parse(arguments)

@@ -11,6 +11,10 @@ module RifferCode::CLI
   extend ::RifferCode::CLI
 end
 
+module RifferCode::Settings
+  extend ::RifferCode::Settings
+end
+
 module RifferCode::UI::Banner
   extend ::RifferCode::UI::Banner
 end

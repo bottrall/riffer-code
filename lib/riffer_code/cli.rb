@@ -16,9 +16,12 @@ module RifferCode::CLI
     agent = RifferCode::CodingAgent.new
     animator = RifferCode::UI::Animator.new(io: output, theme:)
 
-    reveal_banner(theme, animator)
+    model = RifferCode::Settings.model
 
-    renderer = RifferCode::UI::Renderer.new(io: output, theme:)
+    reveal_banner(theme, animator, model)
+
+    tally = RifferCode::TokenTally.new(pricing: RifferCode::Settings.pricing_for(model))
+    renderer = RifferCode::UI::Renderer.new(io: output, theme:, tally:)
     RifferCode::REPL.new(agent:, renderer:, animator:, theme:, input:, output:).run
     0
   end
@@ -49,9 +52,8 @@ module RifferCode::CLI
     input.gets
   end
 
-  def reveal_banner(theme, animator)
+  def reveal_banner(theme, animator, model)
     loaded = [RifferCode::CodingAgent::GLOBAL_AGENTS_FILE, File.join(Dir.pwd, 'AGENTS.md')].select { |path| File.file?(path) }
-    model = ENV.fetch('RIFFER_CODE_MODEL', RifferCode::CodingAgent::DEFAULT_MODEL)
     context = loaded.empty? ? 'none' : loaded.join(', ')
 
     glints = RifferCode::UI::Riffy::GLINT_COLS + [nil]
