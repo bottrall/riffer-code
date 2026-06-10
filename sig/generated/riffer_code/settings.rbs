@@ -24,20 +24,20 @@ module RifferCode::Settings
   DEFAULT_MODEL: ::String
 
   # Returns the configured model string, or +DEFAULT_MODEL+ if not set.
-  def model: (?path: untyped) -> ::String
+  def model: (?path: untyped) -> untyped
 
   # Returns the provider prefix for +model_string+, e.g. <tt>"anthropic"</tt>
   # for <tt>"anthropic/claude-sonnet-4-6"</tt>. Returns +nil+ if the model
   # string contains no slash.
-  def provider_for: (::String model_string) -> ::String?
+  def provider_for: (untyped model_string) -> untyped
 
   # Returns the pricing hash for +model+, or +nil+ if not configured.
   #
   # The returned hash has symbol keys +:input+, +:output+, +:cache_write+,
   # +:cache_read+ (all Float, USD per million tokens).
-  def pricing_for: (untyped model, ?path: untyped) -> { input: ::Float, output: ::Float, cache_write: ::Float, cache_read: ::Float }?
+  def pricing_for: (untyped model, ?path: untyped) -> untyped
 
   private
 
-  def read: (untyped path) -> ::Hash[::String, untyped]
+  def read: (untyped path) -> untyped
 end
