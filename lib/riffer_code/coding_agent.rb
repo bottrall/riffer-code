@@ -4,11 +4,10 @@ require 'date'
 
 class RifferCode::CodingAgent < Riffer::Agent
   GLOBAL_AGENTS_FILE = File.expand_path('~/.riffer-code/AGENTS.md')
-  GLOBAL_SKILLS_DIR = File.expand_path('~/.riffer-code/skills')
+  GLOBAL_SKILLS_DIR  = File.expand_path('~/.riffer-code/skills')
   PROJECT_SKILLS_DIR = -> { File.join(Dir.pwd, '.skills') }
 
   model(-> { RifferCode::Settings.model })
-  model_options cache_control: { type: :ephemeral }
 
   uses_tools [
     RifferCode::Tools::Read,
@@ -51,4 +50,13 @@ class RifferCode::CodingAgent < Riffer::Agent
       - Prefer editing existing files over creating new ones.
     PROMPT
   end)
+
+  # cache_control is Anthropic-specific. Build a per-instance config so we
+  # can set model_options dynamically based on the configured provider without
+  # touching the shared class-level config.
+  def initialize(session: nil, context: nil, config: nil)
+    resolved_config = (config || self.class.config).dup
+    resolved_config.model_options = { cache_control: { type: :ephemeral } } if RifferCode::Settings.provider_for(RifferCode::Settings.model) == 'anthropic'
+    super(session:, context:, config: resolved_config)
+  end
 end

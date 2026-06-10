@@ -1,15 +1,21 @@
 # Generated from lib/riffer_code/cli.rb with RBS::Inline
 
 module RifferCode::CLI
-  def start: (?output: untyped, ?input: untyped) -> untyped
+  PROVIDER_URLS: ::Hash[::String, ::String]
+
+  def start: (?output: untyped, ?input: untyped) -> ::Integer
 
   private
 
-  def onboard: (untyped theme, output: untyped, input: untyped) -> untyped
+  def configure_provider: (::String? provider, ::String api_key) -> void
+
+  def onboard: (::String? provider, untyped theme, output: untyped, input: untyped) -> ::String?
+
+  def env_var_for: (::String? provider) -> ::String
 
   def read_secret: (untyped input) -> untyped
 
-  def reveal_banner: (untyped theme, untyped animator, untyped model) -> untyped
+  def reveal_banner: (untyped theme, untyped animator, untyped model) -> void
 
-  def count_skills: () -> untyped
+  def count_skills: () -> ::String
 end

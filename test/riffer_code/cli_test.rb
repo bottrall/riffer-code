@@ -16,14 +16,28 @@ class RifferCode::CLITest < Minitest::Test
 
   private
 
-  # CLI.start mutates the global Riffer config (anthropic API key) and reads
-  # ENV; snapshot and restore both so the test leaves no residue.
+  # CLI.start mutates the global Riffer config and reads ENV; snapshot and
+  # restore both so tests leave no residue.
   def with_clean_global_state
-    previous_key = Riffer.config.anthropic.api_key
-    previous_env = ENV.fetch('ANTHROPIC_API_KEY', nil)
+    previous = {
+      anthropic: Riffer.config.anthropic.api_key,
+      openai: Riffer.config.openai.api_key,
+      gemini: Riffer.config.gemini.api_key,
+      openrouter: Riffer.config.openrouter.api_key
+    }
+    previous_env = {
+      'ANTHROPIC_API_KEY' => ENV.fetch('ANTHROPIC_API_KEY', nil),
+      'OPENAI_API_KEY' => ENV.fetch('OPENAI_API_KEY', nil),
+      'GEMINI_API_KEY' => ENV.fetch('GEMINI_API_KEY', nil),
+      'OPENROUTER_API_KEY' => ENV.fetch('OPENROUTER_API_KEY', nil)
+    }
+
     yield
   ensure
-    Riffer.config.anthropic.api_key = previous_key
-    ENV['ANTHROPIC_API_KEY'] = previous_env
+    Riffer.config.anthropic.api_key  = previous[:anthropic]
+    Riffer.config.openai.api_key     = previous[:openai]
+    Riffer.config.gemini.api_key     = previous[:gemini]
+    Riffer.config.openrouter.api_key = previous[:openrouter]
+    previous_env.each { |k, v| v ? ENV[k] = v : ENV.delete(k) }
   end
 end
