@@ -47,7 +47,7 @@ module RifferCode::CLI
   end
 
   def onboard(provider, theme, output:, input:)
-    url  = PROVIDER_URLS[provider] || 'your provider'
+    url  = (provider && PROVIDER_URLS[provider]) || 'your provider'
     name = provider ? provider.capitalize : 'provider'
 
     output.puts(theme.cyan('♪ welcome to riffer-code ♪'))
@@ -68,7 +68,7 @@ module RifferCode::CLI
   end
 
   def env_var_for(provider)
-    RifferCode::Credentials::PROVIDER_ENV_VARS.fetch(provider, 'the appropriate API key env var')
+    (provider && RifferCode::Credentials::PROVIDER_ENV_VARS[provider]) || 'the appropriate API key env var'
   end
 
   def read_secret(input)
