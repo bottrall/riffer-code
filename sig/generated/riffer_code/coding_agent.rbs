@@ -6,9 +6,4 @@ class RifferCode::CodingAgent < Riffer::Agent
   GLOBAL_SKILLS_DIR: untyped
 
   PROJECT_SKILLS_DIR: untyped
-
-  # cache_control is Anthropic-specific. Build a per-instance config so we
-  # can set model_options dynamically based on the configured provider without
-  # touching the shared class-level config.
-  def initialize: (?session: untyped, ?context: untyped, ?config: untyped) -> untyped
 end
