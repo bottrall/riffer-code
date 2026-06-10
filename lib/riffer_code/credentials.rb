@@ -45,7 +45,7 @@ module RifferCode::Credentials
   # Saves an API key for +provider+ to the auth file with 0600 permissions.
   def save_api_key(provider, key, path: PATH)
     FileUtils.mkdir_p(File.dirname(path), mode: 0o700)
-    data = read(path).merge(provider => key)
+    data = read(path).tap { |h| h[provider] = key }
     File.open(path, File::WRONLY | File::CREAT | File::TRUNC, 0o600) do |file|
       file.write(JSON.pretty_generate(data))
     end
