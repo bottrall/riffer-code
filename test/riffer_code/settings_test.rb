@@ -156,4 +156,24 @@ class RifferCode::SettingsTest < Minitest::Test
       assert_kind_of Float, pricing[:cache_read]
     end
   end
+
+  def test_provider_for_returns_anthropic_prefix
+    assert_equal 'anthropic', RifferCode::Settings.provider_for('anthropic/claude-sonnet-4-6')
+  end
+
+  def test_provider_for_returns_openai_prefix
+    assert_equal 'openai', RifferCode::Settings.provider_for('openai/gpt-5-mini')
+  end
+
+  def test_provider_for_returns_gemini_prefix
+    assert_equal 'gemini', RifferCode::Settings.provider_for('gemini/gemini-2.5-flash')
+  end
+
+  def test_provider_for_returns_openrouter_prefix
+    assert_equal 'openrouter', RifferCode::Settings.provider_for('openrouter/anthropic/claude-sonnet-4.6')
+  end
+
+  def test_provider_for_returns_nil_for_model_without_slash
+    assert_nil RifferCode::Settings.provider_for('no-slash-model')
+  end
 end

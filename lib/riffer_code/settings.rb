@@ -33,6 +33,19 @@ module RifferCode::Settings
     read(path).fetch('model', DEFAULT_MODEL)
   end
 
+  def model_options
+    return { cache_control: { type: :ephemeral } } if provider_for(model) == 'anthropic'
+
+    {}
+  end
+
+  # Returns the provider prefix for +model_string+, e.g. <tt>"anthropic"</tt>
+  # for <tt>"anthropic/claude-sonnet-4-6"</tt>. Returns +nil+ if the model
+  # string contains no slash.
+  def provider_for(model_string)
+    model_string.split('/', 2).first if model_string.include?('/')
+  end
+
   # Returns the pricing hash for +model+, or +nil+ if not configured.
   #
   # The returned hash has symbol keys +:input+, +:output+, +:cache_write+,

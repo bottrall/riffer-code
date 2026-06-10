@@ -1,11 +1,17 @@
 # Generated from lib/riffer_code/cli.rb with RBS::Inline
 
 module RifferCode::CLI
+  PROVIDER_URLS: untyped
+
   def start: (?output: untyped, ?input: untyped) -> untyped
 
   private
 
-  def onboard: (untyped theme, output: untyped, input: untyped) -> untyped
+  def configure_provider: (untyped provider, untyped api_key) -> untyped
+
+  def onboard: (untyped provider, untyped theme, output: untyped, input: untyped) -> untyped
+
+  def env_var_for: (untyped provider) -> untyped
 
   def read_secret: (untyped input) -> untyped
 

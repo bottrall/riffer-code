@@ -26,6 +26,13 @@ module RifferCode::Settings
   # Returns the configured model string, or +DEFAULT_MODEL+ if not set.
   def model: (?path: untyped) -> untyped
 
+  def model_options: () -> untyped
+
+  # Returns the provider prefix for +model_string+, e.g. <tt>"anthropic"</tt>
+  # for <tt>"anthropic/claude-sonnet-4-6"</tt>. Returns +nil+ if the model
+  # string contains no slash.
+  def provider_for: (untyped model_string) -> untyped
+
   # Returns the pricing hash for +model+, or +nil+ if not configured.
   #
   # The returned hash has symbol keys +:input+, +:output+, +:cache_write+,

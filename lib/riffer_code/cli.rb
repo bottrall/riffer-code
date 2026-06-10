@@ -5,22 +5,31 @@ require 'io/console'
 module RifferCode::CLI
   extend self
 
+  PROVIDER_URLS = {
+    'anthropic' => 'https://console.anthropic.com/settings/keys',
+    'openai' => 'https://platform.openai.com/api-keys',
+    'gemini' => 'https://aistudio.google.com/app/apikey',
+    'openrouter' => 'https://openrouter.ai/keys'
+  }.freeze
+
   def start(output: $stdout, input: $stdin)
     theme = RifferCode::UI::Theme.for(output)
 
-    api_key = RifferCode::Credentials.anthropic_api_key || onboard(theme, output:, input:)
+    model    = RifferCode::Settings.model
+    provider = RifferCode::Settings.provider_for(model)
+
+    api_key = (provider && RifferCode::Credentials.api_key_for(provider)) ||
+              onboard(provider, theme, output:, input:)
     return 1 if api_key.nil?
 
-    Riffer.configure { |config| config.anthropic.api_key = api_key }
+    configure_provider(provider, api_key)
 
-    agent = RifferCode::CodingAgent.new
+    agent    = RifferCode::CodingAgent.new
     animator = RifferCode::UI::Animator.new(io: output, theme:)
-
-    model = RifferCode::Settings.model
 
     reveal_banner(theme, animator, model)
 
-    tally = RifferCode::TokenTally.new(pricing: RifferCode::Settings.pricing_for(model))
+    tally    = RifferCode::TokenTally.new(pricing: RifferCode::Settings.pricing_for(model))
     renderer = RifferCode::UI::Renderer.new(io: output, theme:, tally:)
     RifferCode::REPL.new(agent:, renderer:, animator:, theme:, input:, output:).run
     0
@@ -28,22 +37,38 @@ module RifferCode::CLI
 
   private
 
-  def onboard(theme, output:, input:)
+  def configure_provider(provider, api_key)
+    case provider
+    when 'anthropic'  then Riffer.configure { |c| c.anthropic.api_key  = api_key }
+    when 'openai'     then Riffer.configure { |c| c.openai.api_key     = api_key }
+    when 'gemini'     then Riffer.configure { |c| c.gemini.api_key     = api_key }
+    when 'openrouter' then Riffer.configure { |c| c.openrouter.api_key = api_key }
+    end
+  end
+
+  def onboard(provider, theme, output:, input:)
+    url  = (provider && PROVIDER_URLS[provider]) || 'your provider'
+    name = provider ? provider.capitalize : 'provider'
+
     output.puts(theme.cyan('♪ welcome to riffer-code ♪'))
-    output.puts(theme.grey('No Anthropic API key found. Create one at https://console.anthropic.com/settings/keys'))
-    output.print("#{theme.pink('›')} Paste your Anthropic API key #{theme.grey('(hidden)')}: ")
+    output.puts(theme.grey("No #{name} API key found. Create one at #{url}"))
+    output.print("#{theme.pink('›')} Paste your #{name} API key #{theme.grey('(hidden)')}: ")
 
     key = read_secret(input).to_s.strip
     output.puts
 
     if key.empty?
-      output.puts(theme.grey('No key entered. Set ANTHROPIC_API_KEY or re-run riffer-code to try again.'))
+      output.puts(theme.grey("No key entered. Set #{env_var_for(provider)} or re-run riffer-code to try again."))
       return nil
     end
 
-    RifferCode::Credentials.save_anthropic_api_key(key)
+    RifferCode::Credentials.save_api_key(provider, key) if provider
     output.puts(theme.grey("Saved to #{RifferCode::Credentials::PATH} (permissions 600)."))
     key
+  end
+
+  def env_var_for(provider)
+    (provider && RifferCode::Credentials::PROVIDER_ENV_VARS[provider]) || 'the appropriate API key env var'
   end
 
   def read_secret(input)
@@ -53,7 +78,7 @@ module RifferCode::CLI
   end
 
   def reveal_banner(theme, animator, model)
-    loaded = [RifferCode::CodingAgent::GLOBAL_AGENTS_FILE, File.join(Dir.pwd, 'AGENTS.md')].select { |path| File.file?(path) }
+    loaded  = [RifferCode::CodingAgent::GLOBAL_AGENTS_FILE, File.join(Dir.pwd, 'AGENTS.md')].select { |path| File.file?(path) }
     context = loaded.empty? ? 'none' : loaded.join(', ')
 
     glints = RifferCode::UI::Riffy::GLINT_COLS + [nil]
@@ -64,12 +89,9 @@ module RifferCode::CLI
   end
 
   def count_skills
-    dirs = [
-      RifferCode::CodingAgent::GLOBAL_SKILLS_DIR,
-      RifferCode::CodingAgent::PROJECT_SKILLS_DIR.call
-    ]
+    dirs    = [RifferCode::CodingAgent::GLOBAL_SKILLS_DIR, RifferCode::CodingAgent::PROJECT_SKILLS_DIR.call]
     backend = Riffer::Skills::FilesystemBackend.new(*dirs)
-    count = backend.list_skills.length
+    count   = backend.list_skills.length
     count.zero? ? 'none' : count.to_s
   rescue StandardError
     'none'

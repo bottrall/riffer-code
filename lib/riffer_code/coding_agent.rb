@@ -4,11 +4,11 @@ require 'date'
 
 class RifferCode::CodingAgent < Riffer::Agent
   GLOBAL_AGENTS_FILE = File.expand_path('~/.riffer-code/AGENTS.md')
-  GLOBAL_SKILLS_DIR = File.expand_path('~/.riffer-code/skills')
+  GLOBAL_SKILLS_DIR  = File.expand_path('~/.riffer-code/skills')
   PROJECT_SKILLS_DIR = -> { File.join(Dir.pwd, '.skills') }
 
-  model(-> { RifferCode::Settings.model })
-  model_options cache_control: { type: :ephemeral }
+  model RifferCode::Settings.model
+  model_options RifferCode::Settings.model_options
 
   uses_tools [
     RifferCode::Tools::Read,

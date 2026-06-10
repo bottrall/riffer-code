@@ -3,22 +3,49 @@
 require 'json'
 require 'fileutils'
 
+# Reads and writes API keys for each supported provider in
+# <tt>~/.riffer-code/auth.json</tt>.
+#
+# Keys are stored under the provider name, e.g.:
+#
+#   {
+#     "anthropic": "sk-ant-...",
+#     "openai": "sk-...",
+#     "gemini": "...",
+#     "openrouter": "sk-or-..."
+#   }
+#
+# The environment variable checked per provider:
+#
+#   anthropic  → ANTHROPIC_API_KEY
+#   openai     → OPENAI_API_KEY
+#   gemini     → GEMINI_API_KEY
+#   openrouter → OPENROUTER_API_KEY
+#
 module RifferCode::Credentials
   extend self
 
   PATH = File.expand_path('~/.riffer-code/auth.json')
-  ENV_VAR = 'ANTHROPIC_API_KEY'
-  PROVIDER = 'anthropic'
 
-  def anthropic_api_key(path: PATH)
-    from_env || from_file(path)
+  PROVIDER_ENV_VARS = {
+    'anthropic' => 'ANTHROPIC_API_KEY',
+    'openai' => 'OPENAI_API_KEY',
+    'gemini' => 'GEMINI_API_KEY',
+    'openrouter' => 'OPENROUTER_API_KEY'
+  }.freeze
+
+  # Returns the API key for +provider+, checking the environment variable first,
+  # then the stored file. Returns +nil+ if no key is available.
+  def api_key_for(provider, path: PATH)
+    env_var = PROVIDER_ENV_VARS[provider]
+    key = env_var && ENV.fetch(env_var, nil).then { |v| v unless v.nil? || v.strip.empty? }
+    key || key_from_file(provider, path)
   end
 
-  def save_anthropic_api_key(key, path: PATH)
+  # Saves an API key for +provider+ to the auth file with 0600 permissions.
+  def save_api_key(provider, key, path: PATH)
     FileUtils.mkdir_p(File.dirname(path), mode: 0o700)
-    data = read(path).merge(PROVIDER => key)
-    # Create the file 0600 up front so the plaintext key is never briefly
-    # world-readable (as File.write + chmod would leave it).
+    data = read(path).tap { |h| h[provider] = key }
     File.open(path, File::WRONLY | File::CREAT | File::TRUNC, 0o600) do |file|
       file.write(JSON.pretty_generate(data))
     end
@@ -27,13 +54,8 @@ module RifferCode::Credentials
 
   private
 
-  def from_env
-    value = ENV.fetch(ENV_VAR, nil)
-    value unless value.nil? || value.strip.empty?
-  end
-
-  def from_file(path)
-    key = read(path)[PROVIDER]
+  def key_from_file(provider, path)
+    key = read(path)[provider]
     key unless key.nil? || key.strip.empty?
   end
 
