@@ -17,7 +17,7 @@ class RifferCode::REPLTest < Minitest::Test
 
   def test_skill_command_activates_skill_and_prints_confirmation
     with_skill('refactor') do |agent, output|
-      repl = build_repl(agent, output, "/refactor\n")
+      repl = build_repl(agent, output, "/skill:refactor\n")
 
       repl.run
 
@@ -27,7 +27,7 @@ class RifferCode::REPLTest < Minitest::Test
 
   def test_skill_command_marks_skill_as_activated_on_agent
     with_skill('refactor') do |agent, output|
-      repl = build_repl(agent, output, "/refactor\n")
+      repl = build_repl(agent, output, "/skill:refactor\n")
 
       repl.run
 
@@ -35,10 +35,64 @@ class RifferCode::REPLTest < Minitest::Test
     end
   end
 
+  def test_skill_command_injects_skill_body_as_a_user_turn
+    with_skill('refactor') do |agent, output|
+      repl = build_repl(agent, output, "/skill:refactor\n")
+
+      repl.run
+
+      assert(agent.session.messages.any? { |m| m.role == :user && m.content.include?('You are the refactor assistant.') })
+    end
+  end
+
+  def test_skill_command_wraps_the_body_in_a_skill_block
+    with_skill('refactor') do |agent, output|
+      repl = build_repl(agent, output, "/skill:refactor\n")
+
+      repl.run
+
+      assert(agent.session.messages.any? { |m| m.role == :user && m.content.include?('<skill name="refactor">') })
+    end
+  end
+
+  def test_repeated_skill_invocation_re_injects_the_body
+    with_skill('refactor') do |agent, output|
+      repl = build_repl(agent, output, "/skill:refactor\n/skill:refactor\n")
+
+      repl.run
+
+      bodies = agent.session.messages.count { |m| m.role == :user && m.content.include?('You are the refactor assistant.') }
+
+      assert_equal 2, bodies
+    end
+  end
+
+  def test_skill_command_with_trailing_text_combines_block_and_text
+    with_skill('refactor') do |agent, output|
+      repl = build_repl(agent, output, "/skill:refactor clean up foo.rb\n")
+
+      repl.run
+
+      assert(agent.session.messages.any? do |m|
+        m.role == :user && m.content.include?('<skill name="refactor">') && m.content.include?('clean up foo.rb')
+      end)
+    end
+  end
+
+  def test_skill_only_prompt_does_not_send_an_empty_user_turn
+    with_skill('refactor') do |agent, output|
+      repl = build_repl(agent, output, "/skill:refactor\n")
+
+      repl.run
+
+      refute(agent.session.messages.any? { |m| m.role == :user && m.content.strip.empty? })
+    end
+  end
+
   def test_skill_only_prompt_triggers_agent_turn
     with_skill('refactor') do |_agent, output|
       agent = mock_agent
-      repl = build_repl(agent, output, "/refactor\n")
+      repl = build_repl(agent, output, "/skill:refactor\n")
 
       repl.run
 
@@ -47,101 +101,47 @@ class RifferCode::REPLTest < Minitest::Test
     end
   end
 
-  def test_unrecognised_skill_only_prompt_does_not_trigger_agent_turn
-    Dir.mktmpdir do |dir|
-      Dir.chdir(dir) do
-        output = StringIO.new
-        agent = mock_agent
-        repl = build_repl(agent, output, "/no-such-skill\n")
+  def test_unknown_skill_command_reports_the_error
+    with_skill('refactor') do |_agent, output|
+      agent = mock_agent
+      repl = build_repl(agent, output, "/skill:nonexistent\n")
 
-        repl.run
+      repl.run
 
-        refute_includes output.string, 'Mock response'
-      end
+      assert_includes output.string, 'Unknown skill: nonexistent'
     end
   end
 
-  def test_skill_token_at_start_of_prompt_activates_skill
-    with_skill('refactor') do |agent, output|
+  def test_unknown_skill_command_does_not_trigger_agent_turn
+    with_skill('refactor') do |_agent, output|
+      agent = mock_agent
+      repl = build_repl(agent, output, "/skill:nonexistent\n")
+
+      repl.run
+
+      refute_includes output.string, 'Mock response'
+    end
+  end
+
+  def test_skill_token_without_prefix_is_a_plain_prompt
+    with_skill('refactor') do |_agent, output|
+      agent = mock_agent
       repl = build_repl(agent, output, "/refactor please clean up this file\n")
 
       repl.run
 
-      assert_includes output.string, 'skill: refactor'
+      refute_includes output.string, 'skill: refactor'
     end
   end
 
-  def test_skill_token_at_end_of_prompt_activates_skill
-    with_skill('refactor') do |agent, output|
-      repl = build_repl(agent, output, "please clean up this file /refactor\n")
+  def test_skill_command_must_anchor_to_start_of_line
+    with_skill('refactor') do |_agent, output|
+      agent = mock_agent
+      repl = build_repl(agent, output, "please /skill:refactor this file\n")
 
       repl.run
 
-      assert_includes output.string, 'skill: refactor'
-    end
-  end
-
-  def test_skill_token_mid_prompt_activates_skill
-    with_skill('refactor') do |agent, output|
-      repl = build_repl(agent, output, "please /refactor this file\n")
-
-      repl.run
-
-      assert_includes output.string, 'skill: refactor'
-    end
-  end
-
-  def test_multiple_skill_tokens_activate_first_skill
-    with_skills('refactor', 'code-review') do |agent, output|
-      repl = build_repl(agent, output, "/refactor /code-review\n")
-
-      repl.run
-
-      assert agent.context.skills.activated?('refactor')
-    end
-  end
-
-  def test_multiple_skill_tokens_activate_second_skill
-    with_skills('refactor', 'code-review') do |agent, output|
-      repl = build_repl(agent, output, "/refactor /code-review\n")
-
-      repl.run
-
-      assert agent.context.skills.activated?('code-review')
-    end
-  end
-
-  def test_multiple_skill_tokens_print_confirmation_for_first
-    with_skills('refactor', 'code-review') do |agent, output|
-      repl = build_repl(agent, output, "/refactor /code-review\n")
-
-      repl.run
-
-      assert_includes output.string, 'skill: refactor'
-    end
-  end
-
-  def test_multiple_skill_tokens_print_confirmation_for_second
-    with_skills('refactor', 'code-review') do |agent, output|
-      repl = build_repl(agent, output, "/refactor /code-review\n")
-
-      repl.run
-
-      assert_includes output.string, 'skill: code-review'
-    end
-  end
-
-  def test_unrecognised_slash_token_produces_no_output
-    Dir.mktmpdir do |dir|
-      Dir.chdir(dir) do
-        output = StringIO.new
-        agent = RifferCode::CodingAgent.new
-        repl = build_repl(agent, output, "/no-such-skill\n")
-
-        repl.run
-
-        refute_includes output.string, 'skill:'
-      end
+      refute_includes output.string, 'skill: refactor'
     end
   end
 

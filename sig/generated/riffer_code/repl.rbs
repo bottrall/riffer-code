@@ -3,7 +3,7 @@
 class RifferCode::REPL
   EXIT_COMMANDS: untyped
 
-  SKILL_TOKEN: ::Regexp
+  SKILL_COMMAND: ::Regexp
 
   def initialize: (agent: untyped, renderer: untyped, ?input: untyped, ?output: untyped, ?theme: untyped, ?animator: untyped) -> untyped
 
@@ -13,5 +13,9 @@ class RifferCode::REPL
 
   def run_turn: (untyped prompt) -> untyped
 
+  def run_skill_command: (untyped name, untyped args) -> untyped
+
   def activate_skill: (untyped name) -> untyped
+
+  def skill_block: (untyped name, untyped body) -> untyped
 end
