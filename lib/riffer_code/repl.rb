@@ -2,7 +2,7 @@
 
 class RifferCode::REPL
   EXIT_COMMANDS = ['/exit', '/quit'].freeze
-  SKILL_TOKEN = %r{/(?!(?:exit|quit)\b)([a-z0-9]+(?:-[a-z0-9]+)*)}
+  SKILL_COMMAND = %r{\A/skill:([a-z0-9]+(?:-[a-z0-9]+)*)(?:\s+(.*))?\z}m
 
   def initialize(agent:, renderer:, input: $stdin, output: $stdout, theme: RifferCode::UI::Theme.for(output), animator: RifferCode::UI::Animator.new(io: output, theme:))
     @agent = agent
@@ -24,15 +24,12 @@ class RifferCode::REPL
       next if prompt.empty?
       break if EXIT_COMMANDS.include?(prompt)
 
-      skill_names = prompt.scan(SKILL_TOKEN).flatten
-      remaining = prompt.gsub(SKILL_TOKEN, '').strip
+      match = SKILL_COMMAND.match(prompt)
 
-      skills_activated = skill_names.count { |name| activate_skill(name) }
-
-      if remaining.empty?
-        run_turn('') if skills_activated.positive?
+      if match
+        run_skill_command(match[1], match[2].to_s.strip)
       else
-        run_turn(remaining)
+        run_turn(prompt)
       end
     end
 
@@ -54,6 +51,13 @@ class RifferCode::REPL
     @animator.stop_thinking
   end
 
+  def run_skill_command(name, args)
+    block = activate_skill(name)
+    return if block.nil?
+
+    run_turn([block, args].reject(&:empty?).join("\n\n"))
+  end
+
   def activate_skill(name)
     skills = @agent.context.skills
 
@@ -62,12 +66,21 @@ class RifferCode::REPL
       return
     end
 
-    skills.activate(name)
+    # TODO: read the body without mutating activation state once riffer exposes
+    # a non-mutating Context#read. `activate` marks the skill model-activated as
+    # a side effect, which drops it from the model's catalog after manual use.
+    body = skills.activate(name)
     @output.puts(@theme.magenta("✦ skill: #{name}"))
-    true
+    skill_block(name, body)
   rescue Riffer::ArgumentError
+    @output.puts(@theme.red("Unknown skill: #{name}"))
     nil
   rescue StandardError => e
     @output.puts(@theme.red("Error activating skill: #{e.message}"))
+    nil
+  end
+
+  def skill_block(name, body)
+    "<skill name=\"#{name}\">\n#{body}\n</skill>"
   end
 end
