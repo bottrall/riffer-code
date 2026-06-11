@@ -27,7 +27,7 @@ class RifferCode::TokenTally
   def add(usage)
     @input_tokens += usage.input_tokens
     @output_tokens += usage.output_tokens
-    @cache_write_tokens += usage.cache_creation_tokens || 0
+    @cache_write_tokens += usage.cache_write_tokens || 0
     @cache_read_tokens += usage.cache_read_tokens || 0
   end
 

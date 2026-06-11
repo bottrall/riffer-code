@@ -9,7 +9,7 @@ class RifferCode::TokenTallyTest < Minitest::Test
     Riffer::Providers::TokenUsage.new(
       input_tokens: input,
       output_tokens: output,
-      cache_creation_tokens: cache_write,
+      cache_write_tokens: cache_write,
       cache_read_tokens: cache_read
     )
   end

@@ -83,7 +83,7 @@ class RifferCode::UI::RendererTest < Minitest::Test
     usage = Riffer::Providers::TokenUsage.new(
       input_tokens: 100,
       output_tokens: 50,
-      cache_creation_tokens: 400,
+      cache_write_tokens: 400,
       cache_read_tokens: 200
     )
     event = Riffer::StreamEvents::TokenUsageDone.new(token_usage: usage)
@@ -103,7 +103,7 @@ class RifferCode::UI::RendererTest < Minitest::Test
     usage = Riffer::Providers::TokenUsage.new(
       input_tokens: 100,
       output_tokens: 50,
-      cache_creation_tokens: 400,
+      cache_write_tokens: 400,
       cache_read_tokens: 200
     )
     event = Riffer::StreamEvents::TokenUsageDone.new(token_usage: usage)

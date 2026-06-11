@@ -41,7 +41,7 @@ class RifferCode::UI::Renderer
     @tally.add(usage)
 
     parts = ["↑#{usage.input_tokens}", "↓#{usage.output_tokens}"]
-    parts << "cache_write:#{usage.cache_creation_tokens}" if usage.cache_creation_tokens&.positive?
+    parts << "cache_write:#{usage.cache_write_tokens}" if usage.cache_write_tokens&.positive?
     parts << "cache_read:#{usage.cache_read_tokens}" if usage.cache_read_tokens&.positive?
 
     session_parts = ["session #{@tally.total_tokens} tok"]
