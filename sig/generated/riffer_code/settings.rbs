@@ -34,14 +34,14 @@ module RifferCode::Settings
 
   DEFAULT_MODEL: ::String
 
-  REASONING_LEVELS_BY_PROVIDER: ::Hash[::String, ::Array[::String]]
+  REASONING_LEVELS_BY_PROVIDER: untyped
 
   # Returns the configured model string, or +DEFAULT_MODEL+ if not set.
   def model: (?path: untyped) -> untyped
 
   # Returns model options for the configured model and reasoning level, ready
   # to pass directly to the Riffer agent's +model_options+.
-  def model_options: (?path: untyped) -> ::Hash[::Symbol, untyped]
+  def model_options: (?path: untyped) -> untyped
 
   # Returns the provider prefix for +model_string+, e.g. <tt>"anthropic"</tt>
   # for <tt>"anthropic/claude-sonnet-4-6"</tt>. Returns +nil+ if the model
@@ -56,11 +56,13 @@ module RifferCode::Settings
 
   private
 
-  def base_options: (::String? provider) -> ::Hash[::Symbol, untyped]
+  def base_options: (untyped provider) -> untyped
 
-  def reasoning_for: (?path: untyped, ?provider: ::String?) -> ::String?
+  def reasoning_for: (?path: untyped, ?provider: untyped) -> untyped
 
-  def reasoning_options: (::String? level, ::String? provider) -> ::Hash[::Symbol, untyped]
+  # Maps a reasoning level to the provider-specific model option hash expected
+  # by Riffer. Returns an empty hash when +level+ is +nil+.
+  def reasoning_options: (untyped level, untyped provider) -> untyped
 
   def read: (untyped path) -> untyped
 end
