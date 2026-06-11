@@ -176,4 +176,171 @@ class RifferCode::SettingsTest < Minitest::Test
   def test_provider_for_returns_nil_for_model_without_slash
     assert_nil RifferCode::Settings.provider_for('no-slash-model')
   end
+
+  # model_options — no reasoning configured
+
+  def test_model_options_includes_cache_control_for_anthropic_model
+    Dir.mktmpdir do |dir|
+      path = settings_file(dir, { 'model' => 'anthropic/claude-sonnet-4-6' })
+
+      assert_equal({ type: :ephemeral }, RifferCode::Settings.model_options(path: path)[:cache_control])
+    end
+  end
+
+  def test_model_options_returns_empty_hash_for_openai_model_without_reasoning
+    Dir.mktmpdir do |dir|
+      path = settings_file(dir, { 'model' => 'openai/o3' })
+
+      assert_equal({}, RifferCode::Settings.model_options(path: path))
+    end
+  end
+
+  def test_model_options_returns_empty_hash_when_file_is_absent
+    Dir.mktmpdir do |dir|
+      path = File.join(dir, 'settings.json')
+
+      opts = RifferCode::Settings.model_options(path: path)
+
+      # Default model is Anthropic — expect cache_control only, no reasoning
+      assert_equal({ cache_control: { type: :ephemeral } }, opts)
+    end
+  end
+
+  # model_options — Anthropic reasoning levels
+
+  def test_model_options_sets_anthropic_effort_for_low_reasoning
+    Dir.mktmpdir do |dir|
+      path = settings_file(dir, { 'model' => 'anthropic/claude-sonnet-4-6', 'reasoning' => 'low' })
+
+      assert_equal 'low', RifferCode::Settings.model_options(path: path)[:output_config][:effort]
+    end
+  end
+
+  def test_model_options_sets_anthropic_effort_for_medium_reasoning
+    Dir.mktmpdir do |dir|
+      path = settings_file(dir, { 'model' => 'anthropic/claude-sonnet-4-6', 'reasoning' => 'medium' })
+
+      assert_equal 'medium', RifferCode::Settings.model_options(path: path)[:output_config][:effort]
+    end
+  end
+
+  def test_model_options_sets_anthropic_effort_for_high_reasoning
+    Dir.mktmpdir do |dir|
+      path = settings_file(dir, { 'model' => 'anthropic/claude-sonnet-4-6', 'reasoning' => 'high' })
+
+      assert_equal 'high', RifferCode::Settings.model_options(path: path)[:output_config][:effort]
+    end
+  end
+
+  def test_model_options_retains_cache_control_when_anthropic_reasoning_is_set
+    Dir.mktmpdir do |dir|
+      path = settings_file(dir, { 'model' => 'anthropic/claude-sonnet-4-6', 'reasoning' => 'low' })
+
+      opts = RifferCode::Settings.model_options(path: path)
+
+      assert_equal({ type: :ephemeral }, opts[:cache_control])
+    end
+  end
+
+  # model_options — OpenAI reasoning levels
+
+  def test_model_options_sets_reasoning_effort_for_openai_low
+    Dir.mktmpdir do |dir|
+      path = settings_file(dir, { 'model' => 'openai/o3', 'reasoning' => 'low' })
+
+      assert_equal 'low', RifferCode::Settings.model_options(path: path)[:reasoning]
+    end
+  end
+
+  def test_model_options_sets_reasoning_effort_for_openai_high
+    Dir.mktmpdir do |dir|
+      path = settings_file(dir, { 'model' => 'openai/o3', 'reasoning' => 'high' })
+
+      assert_equal 'high', RifferCode::Settings.model_options(path: path)[:reasoning]
+    end
+  end
+
+  # model_options — OpenRouter reasoning levels
+
+  def test_model_options_sets_reasoning_effort_for_openrouter_medium
+    Dir.mktmpdir do |dir|
+      path = settings_file(dir, { 'model' => 'openrouter/anthropic/claude-sonnet-4.6', 'reasoning' => 'medium' })
+
+      assert_equal 'medium', RifferCode::Settings.model_options(path: path)[:reasoning]
+    end
+  end
+
+  def test_model_options_sets_anthropic_effort_for_xhigh_reasoning
+    Dir.mktmpdir do |dir|
+      path = settings_file(dir, { 'model' => 'anthropic/claude-sonnet-4-6', 'reasoning' => 'xhigh' })
+
+      assert_equal 'xhigh', RifferCode::Settings.model_options(path: path)[:output_config][:effort]
+    end
+  end
+
+  def test_model_options_sets_anthropic_effort_for_max_reasoning
+    Dir.mktmpdir do |dir|
+      path = settings_file(dir, { 'model' => 'anthropic/claude-sonnet-4-6', 'reasoning' => 'max' })
+
+      assert_equal 'max', RifferCode::Settings.model_options(path: path)[:output_config][:effort]
+    end
+  end
+
+  def test_model_options_sets_reasoning_effort_for_openai_xhigh
+    Dir.mktmpdir do |dir|
+      path = settings_file(dir, { 'model' => 'openai/o3', 'reasoning' => 'xhigh' })
+
+      assert_equal 'xhigh', RifferCode::Settings.model_options(path: path)[:reasoning]
+    end
+  end
+
+  def test_model_options_sets_reasoning_effort_for_openrouter_xhigh
+    Dir.mktmpdir do |dir|
+      path = settings_file(dir, { 'model' => 'openrouter/anthropic/claude-sonnet-4.6', 'reasoning' => 'xhigh' })
+
+      assert_equal 'xhigh', RifferCode::Settings.model_options(path: path)[:reasoning]
+    end
+  end
+
+  # model_options — invalid / unknown reasoning values
+
+  def test_model_options_ignores_unrecognised_reasoning_value
+    Dir.mktmpdir do |dir|
+      path = settings_file(dir, { 'model' => 'openai/o3', 'reasoning' => 'turbo' })
+
+      refute RifferCode::Settings.model_options(path: path).key?(:reasoning)
+    end
+  end
+
+  def test_model_options_ignores_max_reasoning_for_openai
+    Dir.mktmpdir do |dir|
+      path = settings_file(dir, { 'model' => 'openai/o3', 'reasoning' => 'max' })
+
+      refute RifferCode::Settings.model_options(path: path).key?(:reasoning)
+    end
+  end
+
+  def test_model_options_ignores_max_reasoning_for_openrouter
+    Dir.mktmpdir do |dir|
+      path = settings_file(dir, { 'model' => 'openrouter/anthropic/claude-sonnet-4.6', 'reasoning' => 'max' })
+
+      refute RifferCode::Settings.model_options(path: path).key?(:reasoning)
+    end
+  end
+
+  def test_model_options_ignores_reasoning_key_for_provider_without_support
+    Dir.mktmpdir do |dir|
+      path = settings_file(dir, { 'model' => 'gemini/gemini-2.5-flash', 'reasoning' => 'high' })
+
+      refute RifferCode::Settings.model_options(path: path).key?(:reasoning)
+    end
+  end
+
+  def test_model_options_ignores_output_config_for_provider_without_support
+    Dir.mktmpdir do |dir|
+      path = settings_file(dir, { 'model' => 'gemini/gemini-2.5-flash', 'reasoning' => 'high' })
+
+      refute RifferCode::Settings.model_options(path: path).key?(:output_config)
+    end
+  end
 end

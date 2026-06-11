@@ -10,6 +10,7 @@ require 'fileutils'
 #
 #   {
 #     "model": "anthropic/claude-sonnet-4-6",
+#     "reasoning": "low",
 #     "models": {
 #       "anthropic/claude-sonnet-4-6": {
 #         "input": 3.0,
@@ -21,6 +22,16 @@ require 'fileutils'
 #   }
 #
 # All keys are optional. Missing pricing means cost display is suppressed.
+# <tt>"reasoning"</tt> is translated to the appropriate provider-specific
+# parameter on each API call; accepted values depend on the provider:
+#
+# - Anthropic: <tt>"low"</tt>, <tt>"medium"</tt>, <tt>"high"</tt>,
+#   <tt>"xhigh"</tt>, <tt>"max"</tt>
+# - OpenAI / OpenRouter: <tt>"low"</tt>, <tt>"medium"</tt>, <tt>"high"</tt>,
+#   <tt>"xhigh"</tt>
+#
+# Omitting the key (or supplying an unrecognised value) leaves the model's
+# default reasoning behaviour unchanged.
 #
 module RifferCode::Settings
   extend self
@@ -28,15 +39,22 @@ module RifferCode::Settings
   PATH = File.expand_path('~/.riffer-code/settings.json')
   DEFAULT_MODEL = 'anthropic/claude-sonnet-4-6'
 
+  REASONING_LEVELS_BY_PROVIDER = {
+    'anthropic' => %w[low medium high xhigh max].freeze,
+    'openai' => %w[low medium high xhigh].freeze,
+    'openrouter' => %w[low medium high xhigh].freeze
+  }.freeze
+
   # Returns the configured model string, or +DEFAULT_MODEL+ if not set.
   def model(path: PATH)
     read(path).fetch('model', DEFAULT_MODEL)
   end
 
-  def model_options
-    return { cache_control: { type: :ephemeral } } if provider_for(model) == 'anthropic'
-
-    {}
+  # Returns model options for the configured model and reasoning level, ready
+  # to pass directly to the Riffer agent's +model_options+.
+  def model_options(path: PATH)
+    provider = provider_for(model(path:))
+    base_options(provider).merge(reasoning_options(reasoning_for(path:, provider:), provider))
   end
 
   # Returns the provider prefix for +model_string+, e.g. <tt>"anthropic"</tt>
@@ -63,6 +81,33 @@ module RifferCode::Settings
   end
 
   private
+
+  def base_options(provider)
+    return { cache_control: { type: :ephemeral } } if provider == 'anthropic'
+
+    {}
+  end
+
+  def reasoning_for(path: PATH, provider: nil)
+    level = read(path)['reasoning']
+    valid_levels = (provider && REASONING_LEVELS_BY_PROVIDER[provider]) || []
+    valid_levels.include?(level) ? level : nil
+  end
+
+  # Maps a reasoning level to the provider-specific model option hash expected
+  # by Riffer. Returns an empty hash when +level+ is +nil+.
+  def reasoning_options(level, provider)
+    return {} unless level
+
+    case provider
+    when 'anthropic'
+      { output_config: { effort: level } }
+    when 'openai', 'openrouter'
+      { reasoning: level }
+    else
+      {}
+    end
+  end
 
   def read(path)
     return {} unless File.file?(path)
