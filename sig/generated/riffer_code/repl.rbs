@@ -15,8 +15,6 @@ class RifferCode::REPL
 
   def run_skill_command: (untyped name, untyped args) -> untyped
 
-  # Returns the skill body wrapped as a user-turn block, or nil if the skill is
-  # unknown or skills are not configured.
   def activate_skill: (untyped name) -> untyped
 
   def skill_block: (untyped name, untyped body) -> untyped
