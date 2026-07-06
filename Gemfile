@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'riffer', '~> 0.32.1'
+gem 'riffer', '~> 0.36.0'
 
 group :development, :test do
   gem 'minitest', '~> 5.20'
