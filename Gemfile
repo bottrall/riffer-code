@@ -7,7 +7,7 @@ gemspec
 gem 'riffer', '~> 0.32.1'
 
 group :development, :test do
-  gem 'minitest', '~> 5.20'
+  gem 'minitest', '~> 6.0'
   gem 'rake', '~> 13.0'
 
   gem 'rubocop', '~> 1.88', require: false
