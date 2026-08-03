@@ -4,7 +4,7 @@ PATH
     riffer-code (0.1.0)
       anthropic (~> 1.42)
       base64 (~> 0.2)
-      riffer (>= 0.32.1, < 0.38.0)
+      riffer (>= 0.32.1, < 0.40.0)
       zeitwerk (~> 2.6)
 
 GEM
@@ -85,7 +85,7 @@ GEM
     regexp_parser (2.12.0)
     reline (0.6.3)
       io-console (~> 0.5)
-    riffer (0.37.1)
+    riffer (0.39.0)
       zeitwerk (~> 2.6, >= 2.6.0)
     rubocop (1.88.2)
       json (~> 2.3)
@@ -141,7 +141,7 @@ GEM
       unicode-emoji (~> 4.1)
     unicode-emoji (4.2.0)
     uri (1.1.1)
-    zeitwerk (2.8.2)
+    zeitwerk (2.8.3)
 
 PLATFORMS
   arm64-darwin-25
@@ -154,7 +154,7 @@ DEPENDENCIES
   rake (~> 13.0)
   rbs (~> 4.0)
   rbs-inline (~> 0.14)
-  riffer (~> 0.37.1)
+  riffer (~> 0.39.0)
   riffer-code!
   rubocop (~> 1.88)
   rubocop-minitest (~> 0.40)
@@ -205,7 +205,7 @@ CHECKSUMS
   rbs-inline (0.14.0) sha256=eaf47b46690d63acddab1f6804c9cc205a4bc78e637cfc421a0b1239874ef51c
   regexp_parser (2.12.0) sha256=35a916a1d63190ab5c9009457136ae5f3c0c7512d60291d0d1378ba18ce08ebb
   reline (0.6.3) sha256=1198b04973565b36ec0f11542ab3f5cfeeec34823f4e54cebde90968092b1835
-  riffer (0.37.1) sha256=b339e0fba236f3e4a8d6c0dbcb4657e8b0e80838d42ae8f2873e2a11804232a7
+  riffer (0.39.0) sha256=c35fe45511f94f6fc3ab05c117e242e1a2b4695d31c2d30f0c42e74c85ea7440
   riffer-code (0.1.0)
   rubocop (1.88.2) sha256=8def251c90cd955feb4daa3edc0ab56893250c4ce90ef81e6c80c03f9a939bbf
   rubocop-ast (1.50.0) sha256=b9ca88300da0803ee222ad20cdb30494c0a784eed06fdc35d254b06d662788db
@@ -224,7 +224,7 @@ CHECKSUMS
   unicode-display_width (3.2.0) sha256=0cdd96b5681a5949cdbc2c55e7b420facae74c4aaf9a9815eee1087cb1853c42
   unicode-emoji (4.2.0) sha256=519e69150f75652e40bf736106cfbc8f0f73aa3fb6a65afe62fefa7f80b0f80f
   uri (1.1.1) sha256=379fa58d27ffb1387eaada68c749d1426738bd0f654d812fcc07e7568f5c57c6
-  zeitwerk (2.8.2) sha256=7212a61311083c604184b1ea2574b9aa05cd14f855a0841c06985cabe9181d12
+  zeitwerk (2.8.3) sha256=2c85125a8467ce069e20123d1e709a08955c9d29c118c25b46b7b7fafdbb92e5
 
 BUNDLED WITH
   4.0.12
