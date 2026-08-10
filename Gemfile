@@ -15,7 +15,7 @@ group :development, :test do
   gem 'rubocop-performance', '~> 1.26', require: false
   gem 'rubocop-rake', '~> 0.7', require: false
 
-  gem 'rbs', '~> 4.0', require: false
+  gem 'rbs', '~> 4.1', require: false
   gem 'rbs-inline', '~> 0.14', require: false
   gem 'steep', '~> 2.0', require: false
 
