@@ -10,10 +10,11 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    anthropic (1.56.0)
-      cgi
-      connection_pool
-      standardwebhooks
+    anthropic (1.62.0)
+      base64 (~> 0.1)
+      cgi (~> 0.1)
+      connection_pool (>= 2, < 4)
+      standardwebhooks (~> 1.0)
     ast (2.4.3)
     base64 (0.3.0)
     cgi (0.5.2)
@@ -163,7 +164,7 @@ DEPENDENCIES
   steep (~> 2.0)
 
 CHECKSUMS
-  anthropic (1.56.0) sha256=374efa5627c484279ecc6a9a95b33bcde308e3f2503957e3908f1395ef061198
+  anthropic (1.62.0) sha256=3aa95be41390e512aae2b22a82476c1af3c1ad97c29ff7a3712f78ba3d9e5f9e
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
   base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
   bundler (4.0.12) sha256=7f8b757d28dfb636e7b24fba2344ac6dd13b5b24f4b46d62573d483f211825ac
