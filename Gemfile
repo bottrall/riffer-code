@@ -17,7 +17,7 @@ group :development, :test do
 
   gem 'rbs', '~> 4.0', require: false
   gem 'rbs-inline', '~> 0.14', require: false
-  gem 'steep', '~> 2.0', require: false
+  gem 'steep', '~> 2.1', require: false
 
   gem 'guard'
   gem 'guard-shell'
