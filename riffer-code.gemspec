@@ -22,6 +22,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'anthropic', '~> 1.62'
   spec.add_dependency 'base64', '~> 0.2'
-  spec.add_dependency 'riffer', '>= 0.32.1', '< 0.42.0'
+  spec.add_dependency 'riffer', '>= 0.32.1', '< 0.44.0'
   spec.add_dependency 'zeitwerk', '~> 2.8'
 end

@@ -4,13 +4,13 @@ PATH
     riffer-code (0.1.0)
       anthropic (~> 1.62)
       base64 (~> 0.2)
-      riffer (>= 0.32.1, < 0.42.0)
+      riffer (>= 0.32.1, < 0.44.0)
       zeitwerk (~> 2.8)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    anthropic (1.62.0)
+    anthropic (1.67.0)
       base64 (~> 0.1)
       cgi (~> 0.1)
       connection_pool (>= 2, < 4)
@@ -86,7 +86,7 @@ GEM
     regexp_parser (2.12.0)
     reline (0.7.0)
       io-console (~> 0.5)
-    riffer (0.41.0)
+    riffer (0.43.0)
       zeitwerk (~> 2.6, >= 2.6.0)
     rubocop (1.89.0)
       json (~> 2.3)
@@ -155,7 +155,7 @@ DEPENDENCIES
   rake (~> 13.0)
   rbs (~> 4.0)
   rbs-inline (~> 0.14)
-  riffer (~> 0.41.0)
+  riffer (~> 0.43.0)
   riffer-code!
   rubocop (~> 1.88)
   rubocop-minitest (~> 0.40)
@@ -164,7 +164,7 @@ DEPENDENCIES
   steep (~> 2.0)
 
 CHECKSUMS
-  anthropic (1.62.0) sha256=3aa95be41390e512aae2b22a82476c1af3c1ad97c29ff7a3712f78ba3d9e5f9e
+  anthropic (1.67.0) sha256=f477eeab0277fb12a885e5011ce18b6705cb98fb0bd074d8a3d2860877d3502b
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
   base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
   bundler (4.0.12) sha256=7f8b757d28dfb636e7b24fba2344ac6dd13b5b24f4b46d62573d483f211825ac
@@ -206,7 +206,7 @@ CHECKSUMS
   rbs-inline (0.14.0) sha256=eaf47b46690d63acddab1f6804c9cc205a4bc78e637cfc421a0b1239874ef51c
   regexp_parser (2.12.0) sha256=35a916a1d63190ab5c9009457136ae5f3c0c7512d60291d0d1378ba18ce08ebb
   reline (0.7.0) sha256=5b012d8e55dbf9d450f12bde2cf7d15ff546ae80b3f8f3b30e570d431815583d
-  riffer (0.41.0) sha256=ea5f6137bc14ad57b5ba04d68fcd9fdb21ead524b690a59aae7ec57e533d976b
+  riffer (0.43.0) sha256=ba1105ac60c0dd34f3242192b4701711afe41e462fea2a2106323a9dd3f3f552
   riffer-code (0.1.0)
   rubocop (1.89.0) sha256=4dee8e3ee9c45e474834efd9e8d6fd031e8331c8dacdff0de4ad65ae0a6faae7
   rubocop-ast (1.50.0) sha256=b9ca88300da0803ee222ad20cdb30494c0a784eed06fdc35d254b06d662788db
