@@ -8,6 +8,7 @@
     ".": {
       "package-name": "riffer-rig",
       "component": "riffer-rig",
+      "initial-version": "0.1.0",
       "version-file": "lib/riffer/rig/version.rb"
     }
   }
