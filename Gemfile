@@ -4,8 +4,6 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'riffer', '~> 0.45.0'
-
 group :development, :test do
   gem 'minitest', '~> 6.0'
   gem 'rake', '~> 13.0'

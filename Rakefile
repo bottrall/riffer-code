@@ -4,6 +4,7 @@
 # documented entry points; each one delegates to a task below and adds nothing
 # but argument translation. See README "Development".
 
+require 'bundler/gem_tasks'
 require 'rake/testtask'
 require 'rubocop/rake_task'
 require 'tmpdir'

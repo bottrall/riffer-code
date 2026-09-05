@@ -4,7 +4,7 @@ PATH
     riffer-rig (0.1.0)
       anthropic (~> 1.69)
       base64 (~> 0.2)
-      riffer (>= 0.32.1, < 0.46.0)
+      riffer (~> 0.45.0)
       zeitwerk (~> 2.8)
 
 GEM
@@ -156,7 +156,6 @@ DEPENDENCIES
   rake (~> 13.0)
   rbs (~> 4.2)
   rbs-inline (~> 0.14)
-  riffer (~> 0.45.0)
   riffer-rig!
   rubocop (~> 1.90)
   rubocop-minitest (~> 0.40)
