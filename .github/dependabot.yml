@@ -1,4 +1,4 @@
-# Shared Dependabot layout across bottrall projects (sterling, ration, punch, mailroom, riffer-code).
+# Shared Dependabot layout across bottrall projects (sterling, ration, punch, mailroom, riffer-rig).
 # Keep these conventions in sync:
 #   - Ecosystem order: github-actions, bundler, npm, docker.
 #   - Every ecosystem: weekly on Monday 09:00 America/Vancouver, 3-day cooldown,

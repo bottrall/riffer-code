@@ -1,11 +1,13 @@
 # Namespace modules autovivified by Zeitwerk in Ruby; RBS needs them declared
-# explicitly so the compact `RifferCode::UI::*` / `RifferCode::Tools::*`
+# explicitly so the compact `Riffer::Rig::UI::*` / `Riffer::Rig::Tools::*`
 # signatures resolve.
 
-module RifferCode
-  module UI
-  end
+module Riffer
+  module Rig
+    module UI
+    end
 
-  module Tools
+    module Tools
+    end
   end
 end

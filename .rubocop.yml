@@ -27,6 +27,10 @@ Style/Documentation: { Enabled: false }
 # Encoded universal principles (see CLAUDE.md / docs).
 Style/ClassAndModuleChildren: # compact constant names
   EnforcedStyle: compact
+  Exclude:
+    # The gemspec loads version.rb before riffer, so it must define the
+    # namespace nested (`module Riffer; module Rig`) rather than compact.
+    - "lib/riffer/rig/version.rb"
 Style/ModuleFunction: # modules of pure functions use `extend self` (ruby.md)
   EnforcedStyle: extend_self
 Minitest/MultipleAssertions: # single-assertion principle
@@ -37,11 +41,6 @@ Style/OptionalBooleanParameter: # no positional booleans
   Enabled: true
 Style/MutableConstant: # freeze shared constants / value objects
   Enabled: true
-
-# The gem entry point must be named to match the hyphenated gem name.
-Naming/FileName:
-  Exclude:
-    - "lib/riffer-code.rb"
 
 # Tools receive `context:` from the Riffer runtime; the keyword name is part of
 # that contract even when a given tool doesn't use it.

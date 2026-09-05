@@ -2,4 +2,4 @@
 
 require 'minitest/autorun'
 require 'tmpdir'
-require 'riffer-code'
+require 'riffer/rig'

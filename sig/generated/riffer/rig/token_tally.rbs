@@ -1,0 +1,35 @@
+# Generated from lib/riffer/rig/token_tally.rb with RBS::Inline
+
+# Accumulates token usage across multiple turns in a session and computes an
+# estimated cost based on a pricing hash sourced from +Riffer::Rig::Settings+.
+#
+# Instantiate once per REPL session, call +add+ after each turn, then read
+# +total_tokens+ and +estimated_cost+ for display.
+#
+#   pricing = Riffer::Rig::Settings.pricing_for('anthropic/claude-sonnet-4-6')
+#   tally = Riffer::Rig::TokenTally.new(pricing: pricing)
+#   tally.add(usage)
+#   tally.estimated_cost  # => 0.000042  (USD), or nil if pricing is nil
+class Riffer::Rig::TokenTally
+  attr_reader input_tokens: untyped
+
+  attr_reader output_tokens: untyped
+
+  attr_reader cache_write_tokens: untyped
+
+  attr_reader cache_read_tokens: untyped
+
+  def initialize: (?pricing: untyped) -> untyped
+
+  # Accumulates token counts from a +Riffer::Providers::TokenUsage+ object.
+  def add: (untyped usage) -> untyped
+
+  # Returns the total token count across all categories.
+  def total_tokens: () -> untyped
+
+  # Returns +true+ if any tokens have been counted.
+  def any?: () -> untyped
+
+  # Returns the estimated cost in USD, or +nil+ if no pricing was provided.
+  def estimated_cost: () -> untyped
+end

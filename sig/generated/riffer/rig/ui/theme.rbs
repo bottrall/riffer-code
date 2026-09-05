@@ -1,0 +1,27 @@
+# Generated from lib/riffer/rig/ui/theme.rb with RBS::Inline
+
+# Behaviour lives in a reopened class (rather than the `Data.define` block) so
+# the type checker can analyse the methods.
+class Riffer::Rig::UI::Theme
+  def self.for: (untyped io) -> untyped
+
+  def paint: (untyped text, untyped rgb) -> untyped
+
+  def pink: (untyped text) -> untyped
+
+  def magenta: (untyped text) -> untyped
+
+  def purple: (untyped text) -> untyped
+
+  def blue: (untyped text) -> untyped
+
+  def cyan: (untyped text) -> untyped
+
+  def grey: (untyped text) -> untyped
+
+  def red: (untyped text) -> untyped
+
+  def dim: (untyped text) -> untyped
+
+  def bold: (untyped text) -> untyped
+end

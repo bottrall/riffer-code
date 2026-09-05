@@ -1,0 +1,21 @@
+# Generated from lib/riffer/rig/cli.rb with RBS::Inline
+
+module Riffer::Rig::CLI
+  PROVIDER_URLS: untyped
+
+  def start: (?output: untyped, ?input: untyped) -> untyped
+
+  private
+
+  def configure_provider: (untyped provider, untyped api_key) -> untyped
+
+  def onboard: (untyped provider, untyped theme, output: untyped, input: untyped) -> untyped
+
+  def env_var_for: (untyped provider) -> untyped
+
+  def read_secret: (untyped input) -> untyped
+
+  def reveal_banner: (untyped theme, untyped animator, untyped model) -> untyped
+
+  def count_skills: () -> untyped
+end

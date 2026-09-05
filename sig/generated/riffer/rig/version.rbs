@@ -1,0 +1,7 @@
+# Generated from lib/riffer/rig/version.rb with RBS::Inline
+
+module Riffer
+  module Rig
+    VERSION: ::String
+  end
+end

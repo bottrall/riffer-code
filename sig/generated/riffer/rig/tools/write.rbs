@@ -1,0 +1,5 @@
+# Generated from lib/riffer/rig/tools/write.rb with RBS::Inline
+
+class Riffer::Rig::Tools::Write < Riffer::Tool
+  def call: (context: untyped, path: untyped, content: untyped) -> untyped
+end

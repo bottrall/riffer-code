@@ -1,8 +1,8 @@
-# riffer-code
+# riffer-rig
 
 A dead-simple terminal coding agent built on [riffer](https://github.com/janeapp/riffer).
 
-`riffer-code` is an interactive terminal coding agent with read, write, edit, and bash tools — point it at your project and chat with it from the command line.
+`riffer-rig` is an interactive terminal coding agent with read, write, edit, and bash tools — point it at your project and chat with it from the command line.
 
 ## Requirements
 
@@ -13,32 +13,32 @@ A dead-simple terminal coding agent built on [riffer](https://github.com/janeapp
 Install the gem:
 
 ```bash
-gem install riffer-code
+gem install riffer-rig
 ```
 
-This provides a `riffer-code` executable.
+This provides a `riffer` executable.
 
 ## Usage
 
 Run the agent from any project directory:
 
 ```bash
-riffer-code
+riffer
 ```
 
 ### Authentication
 
-`riffer-code` talks to Anthropic. Provide your API key in either of two ways:
+`riffer-rig` talks to Anthropic. Provide your API key in either of two ways:
 
 - Set the `ANTHROPIC_API_KEY` environment variable, or
-- Run `riffer-code` and paste your key when prompted on first launch. It is saved to `~/.riffer-code/auth.json` (file permissions `600`) for subsequent runs.
+- Run `riffer` and paste your key when prompted on first launch. It is saved to `~/.riffer/auth.json` (file permissions `600`) for subsequent runs.
 
 Create a key at https://console.anthropic.com/settings/keys.
 
 ### Configuration
 
-- `RIFFER_CODE_MODEL` — override the default model.
-- `AGENTS.md` — if present, an `AGENTS.md` in the current working directory and/or a global `~/.riffer-code/AGENTS.md` is loaded as additional context.
+- `RIFFER_MODEL` — override the default model.
+- `AGENTS.md` — if present, an `AGENTS.md` in the current working directory and/or a global `~/.riffer/AGENTS.md` is loaded as additional context.
 
 ## Development
 
