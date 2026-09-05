@@ -1,0 +1,46 @@
+# Release and publish. release-please keeps a release PR open on main; merging
+# it tags vX.Y.Z and creates the GitHub Release, and the publish job pushes the
+# gem to RubyGems.org via Trusted Publishing (no API key).
+#
+# The publish job lives in this workflow rather than on a `release` event
+# because releases created with the default GITHUB_TOKEN do not trigger other
+# workflows. The RubyGems trusted publisher is pinned to this file name and the
+# `release` environment; change either and publishing stops.
+
+name: publish
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: googleapis/release-please-action@v5
+        id: release
+
+  publish:
+    needs: release-please
+    if: needs.release-please.outputs.release_created == 'true'
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - uses: rubygems/release-gem@v1

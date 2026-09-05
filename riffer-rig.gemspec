@@ -14,14 +14,16 @@ Gem::Specification.new do |spec|
   spec.license = 'MIT'
   spec.required_ruby_version = '>= 4.0'
   spec.metadata['rubygems_mfa_required'] = 'true'
+  spec.metadata['changelog_uri'] = 'https://github.com/bottrall/riffer-rig/blob/main/CHANGELOG.md'
+  spec.metadata['source_code_uri'] = spec.homepage
 
-  spec.files = Dir['lib/**/*.rb', 'exe/*', 'README.md']
+  spec.files = Dir['lib/**/*.rb', 'exe/*', 'README.md', 'CHANGELOG.md']
   spec.bindir = 'exe'
   spec.executables = ['riffer']
   spec.require_paths = ['lib']
 
   spec.add_dependency 'anthropic', '~> 1.69'
   spec.add_dependency 'base64', '~> 0.2'
-  spec.add_dependency 'riffer', '>= 0.32.1', '< 0.46.0'
+  spec.add_dependency 'riffer', '~> 0.45.0'
   spec.add_dependency 'zeitwerk', '~> 2.8'
 end
