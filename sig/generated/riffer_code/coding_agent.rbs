@@ -1,9 +1,0 @@
-# Generated from lib/riffer_code/coding_agent.rb with RBS::Inline
-
-class RifferCode::CodingAgent < Riffer::Agent
-  GLOBAL_AGENTS_FILE: untyped
-
-  GLOBAL_SKILLS_DIR: untyped
-
-  PROJECT_SKILLS_DIR: untyped
-end

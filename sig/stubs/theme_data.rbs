@@ -1,8 +1,8 @@
-# Members provided by `Data.define(:enabled)` in lib/riffer_code/ui/theme.rb,
+# Members provided by `Data.define(:enabled)` in lib/riffer/rig/ui/theme.rb,
 # which rbs-inline does not capture from the assignment form. Merged with the
 # generated class signature.
 
-class RifferCode::UI::Theme
+class Riffer::Rig::UI::Theme
   attr_reader enabled: bool
 
   def self.new: (enabled: bool) -> instance
