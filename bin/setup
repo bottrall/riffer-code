@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Bootstrap a fresh checkout. This is the one bin/ script that does not
+# delegate to rake, because rake is not available until it has run.
+set -e
+exec bundle install "$@"

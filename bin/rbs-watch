@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
+# Regenerate sig/generated whenever a file under lib/ changes.
 set -e
-exec bundle exec rake rbs:watch "$@"
+exec bundle exec rake rbs:watch

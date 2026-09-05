@@ -42,24 +42,17 @@ Create a key at https://console.anthropic.com/settings/keys.
 
 ## Development
 
-After checking out the repo, install dependencies:
+Every project chore is a script in `bin/`. The Rakefile behind them is an implementation detail; you never need to call rake directly.
 
-```bash
-bin/install
-```
-
-Run the test suite:
-
-```bash
-bundle exec rake test
-```
-
-Check code style and types:
-
-```bash
-bundle exec rubocop
-bundle exec steep check
-```
+| Script | What it does |
+| --- | --- |
+| `bin/setup` | Install dependencies on a fresh checkout |
+| `bin/test` | Run the test suite. Pass files and/or Minitest flags: `bin/test test/foo_test.rb -n /pattern/` |
+| `bin/lint` | Run RuboCop. Arguments are forwarded, e.g. `bin/lint -a` |
+| `bin/typecheck` | Check `sig/generated` is current, then type-check with Steep |
+| `bin/rbs` | Regenerate `sig/generated` from the inline annotations in `lib/` |
+| `bin/rbs-watch` | Regenerate `sig/generated` whenever `lib/` changes |
+| `bin/ci` | Run everything CI runs, serially. Use before pushing |
 
 ## Contributing
 

@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
+# Check sig/generated is current, then type-check with Steep.
+# Any arguments are forwarded to `steep check`.
 set -e
-exec bundle exec steep check "$@"
+exec bundle exec rake typecheck STEEP_OPTS="$*"
